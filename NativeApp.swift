@@ -132,7 +132,6 @@ struct ChatDeletionRequest: Identifiable {
                 return try NativeEngine(store: ProjectStore(root: root))
             }.value
             engine = service
-            let ollama = Process(); ollama.executableURL = URL(fileURLWithPath: "/usr/bin/open"); ollama.arguments = ["-gj", "-a", "Ollama"]; ollama.standardOutput = FileHandle.nullDevice; ollama.standardError = FileHandle.nullDevice; try? ollama.run()
             await refreshModels()
             projects = await service.projects(); await refreshQueue()
             let requested = args.firstIndex(of: "--open-project").flatMap { $0 + 1 < args.count ? args[$0 + 1] : nil }
@@ -147,7 +146,7 @@ struct ChatDeletionRequest: Identifiable {
                 }
             }
             await service.start()
-            notice = "準備できました。資料も会話もこのMacに保存します。"
+            if connected { notice = "準備できました。資料も会話もこのMacに保存します。" }
         } catch { self.error = error.localizedDescription; notice = "起動できませんでした。元データは保持されています。" }
         starting = false
     }
@@ -155,7 +154,7 @@ struct ChatDeletionRequest: Identifiable {
         do {
             models = try await service().models(); connected = true
             notice = models.isEmpty ? "Ollamaにモデルがありません。INSTALL.mdの手順でモデルを用意してください。" : "モデル一覧を取得しました。実行時に利用できるか再確認します。"
-        } catch { connected = false; notice = "Ollamaに接続できません。ローカルサービスを確認し、接続・モデルを再確認してください。" }
+        } catch { connected = false; notice = "Ollamaに接続できません。CLI構成ではTerminalで brew services start ollama を実行し、「接続・モデルを確認」を押してください。既存GUI構成ではOllamaを手動起動してください。" }
     }
     func refreshQueue() async {
         guard let engine else { return }

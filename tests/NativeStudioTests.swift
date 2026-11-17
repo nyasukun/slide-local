@@ -11,6 +11,11 @@ final class StudioChatInference: LocalInference, @unchecked Sendable {
     func finish() { lock.lock(); let value = continuation; lock.unlock(); value?.yield(ChatDelta(text: "回答", done: true)); value?.finish() }
     func isReady() -> Bool { lock.lock(); defer { lock.unlock() }; return continuation != nil }
 }
+struct DisconnectedInference: LocalInference {
+    func models() async throws -> [LocalModel] { throw StudioError("offline fixture") }
+    func translate(_ text: String, target: String, model: String, source: String, context: String) async throws -> String { throw StudioError("unreachable") }
+    func chat(model: String, messages: [[String: String]]) -> AsyncThrowingStream<ChatDelta, Error> { AsyncThrowingStream { $0.finish() } }
+}
 
 @main struct NativeStudioTests {
     @MainActor static func check(_ value: Bool, _ message: String) throws { if !value { throw StudioError(message) } }
@@ -140,6 +145,10 @@ final class StudioChatInference: LocalInference, @unchecked Sendable {
         while await settingEngine.queueSnapshot().items.last?.status != "complete" { if Date() > deadline { throw StudioError("completion timeout") }; try await Task.sleep(nanoseconds: 5_000_000) }
         await settingStudio.refreshCurrent(); await settingStudio.refreshQueue()
         try check(settingStudio.currentOptions.target == "en" && settingStudio.canExport, "finished request left stale unapplied editor options")
+        let offlineStore = try ProjectStore(root: store.root.appendingPathComponent("disconnected-cli"))
+        let offlineStudio = StudioModel(engine: try NativeEngine(store: offlineStore, inference: DisconnectedInference()))
+        await offlineStudio.refreshModels()
+        try check(!offlineStudio.connected && offlineStudio.notice.contains("brew services start ollama") && offlineStudio.notice.contains("接続・モデルを確認"), "CLI connection recovery did not match current controls")
         print("Studio actions: fixed targets, draft assessment, cancellation, batch confirmation, duplicate guard, blank draft failure, missing model PASS")
     }
 }

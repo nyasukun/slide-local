@@ -3,11 +3,13 @@ from pathlib import Path
 import os,sys,json,subprocess,tempfile,time,signal,urllib.request,shutil,socket,hashlib
 from pptx import Presentation
 from pptx.util import Inches
+from ollama_cli import resolve_ollama_binary
 ROOT=Path(__file__).resolve().parents[1]
 CACHE=ROOT/'.cache/offline-check'
 MODELS=Path.home()/'.ollama/models'
 
 def main():
+    ollama_binary=resolve_ollama_binary(os.environ)
     scratch=Path(tempfile.mkdtemp(prefix='slp-offline-',dir='/private/tmp'))
     server=None
     model_meta={str(p.relative_to(MODELS)):(p.stat().st_size,p.stat().st_mtime_ns) for p in MODELS.rglob('*') if p.is_file()}
@@ -35,7 +37,7 @@ def main():
              'OLLAMA_NO_CLOUD':'1','OLLAMA_KEEP_ALIVE':'5m','OLLAMA_NUM_PARALLEL':'1','OLLAMA_MAX_LOADED_MODELS':'2'}
         sandbox=['/usr/bin/sandbox-exec','-D','MODEL_ROOT='+str(MODELS.resolve()),'-f',str(scratch/'offline.sb')]
         with (scratch/'server.log').open('wb') as log:
-            server=subprocess.Popen([*sandbox,'/Applications/Ollama.app/Contents/Resources/ollama','serve'],env=env,cwd=scratch,stdout=log,stderr=log,start_new_session=True)
+            server=subprocess.Popen([*sandbox,ollama_binary,'serve'],env=env,cwd=scratch,stdout=log,stderr=log,start_new_session=True)
             opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
             for _ in range(100):
                 if server.poll() is not None:raise RuntimeError('Isolated Ollama exited: '+(scratch/'server.log').read_text()[-1800:])

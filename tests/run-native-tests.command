@@ -3,6 +3,7 @@ set -eu
 TASK_ROOT="${0:A:h:h}"
 cd "$TASK_ROOT"
 mkdir -p .cache/native-tests .cache/swift
+python3 -m unittest discover -s tests -p 'test_*cli*.py'
 TASK_CORE=(NativeTypes.swift NativeTranslationPolicy.swift NativeZIP.swift NativePPTX.swift NativeStore.swift NativeOllama.swift NativePreviewPolicy.swift)
 TASK_SWIFT=(-parse-as-library -import-objc-header NativeBridge.h -lz -lsqlite3 -module-cache-path .cache/swift -swift-version 5)
 /usr/bin/swiftc "${TASK_CORE[@]}" tests/NativeCoreTests.swift "${TASK_SWIFT[@]}" -o .cache/native-tests/check

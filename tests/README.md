@@ -23,6 +23,8 @@ NATIVE_LAYOUT_CHECK=1 ./tests/run-native-tests.command
 
 This produces ignored PNGs under `.cache/native-tests/layout-results/` at 1100×760 and 1450×760 with the question panel on/off. It confirms rendering at the requested bounds, not keyboard interaction, VoiceOver, OS save panels, real inference or renderer availability. Inspect images for clipping and perform those checks on a real macOS desktop before claiming complete GUI acceptance. It does not open the user's documents or use their application data.
 
+The suite also runs dependency-free Python tests for CLI executable resolution and narrow source regressions for the UI startup (not a GUI acceptance test). Run just these with `python3 -m unittest discover -s tests -p 'test_*cli*.py'`.
+
 `reference_pptx.py` is a read-only independent OOXML inspector used as an oracle. There is no legacy web backend in this repository.
 
 ## Optional preview test
@@ -37,7 +39,13 @@ It checks that the renderer policy rejects TCP connections to test-owned IPv4/IP
 
 ## Optional offline integration
 
-Requires `/Applications/Ollama.app`, `/Applications/LibreOffice.app`, existing models under `~/.ollama/models`, and the exact names `plamo-translate:0.8b` / `qwen3.5:4b`. Custom model directories are not supported by this test harness.
+Requires an Ollama CLI (normally `brew install ollama`), `/Applications/LibreOffice.app`, existing models under `~/.ollama/models`, and the exact names `plamo-translate:0.8b` / `qwen3.5:4b`. Custom model directories are not supported by this test harness. The GUI app is not required.
+
+The executable is resolved from `OLLAMA_BIN`, then `ollama` on the caller's `PATH`, then the legacy `/Applications/Ollama.app/Contents/Resources/ollama`. An explicitly set but empty, missing or non-executable `OLLAMA_BIN` is an error, not a reason to silently select another binary. Quote paths containing spaces:
+
+```sh
+OLLAMA_BIN="/path with spaces/ollama" ./tests/run-offline-check.command
+```
 
 ```sh
 ./tests/run-offline-check.command
