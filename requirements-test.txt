@@ -1,0 +1,5 @@
+# Development-only; the installed app does not use Python.
+python-pptx==1.0.2
+lxml==6.1.3
+pillow==13.0.0
+xlsxwriter==3.3.1
