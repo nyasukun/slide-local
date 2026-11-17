@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-11-17-translation-ux-design.md`
 
+**Execution status:** Tasks 1–6 implemented and verified; Ollama CLI branch merged locally. Full suite, native rendering, signed stage build and real sandboxed offline integration passed. Task steps below preserve the original checklist; completed evidence, deviations and deferred/manual items are consolidated in `docs/superpowers/reviews/2026-11-17-translation-ux.md`. Final merge into `main` awaits the user's integration choice.
+
 ## Global Constraints
 
 - SwiftUI/AppKitと既存ローカルエンジン、既存データとの読取互換性・ローカル通信保護を維持する。

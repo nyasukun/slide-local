@@ -136,15 +136,15 @@ actor NativeEngine {
     }
     func setPaused(_ paused: Bool) throws { var next = queue; next.paused = paused; try store.saveQueue(next); queue = next; lastError = nil; changed(); kick() }
     func cancel(_ itemID: String) throws {
-        guard let index = queue.items.firstIndex(where: { $0.id == itemID }) else { throw StudioError("キューの項目が見つかりません。") }
+        guard let index = queue.items.firstIndex(where: { $0.id == itemID }) else { throw StudioError("この翻訳予約が見つかりません。進行状況を確認してください。") }
         var next = queue
         if next.items[index].status == "queued" { next.items[index].status = "cancelled"; next.items[index].message = "待機を取り消しました。"; next.items[index].finished = Date().timeIntervalSince1970 }
-        else if next.items[index].status == "running" { next.items[index].cancel_requested = true; next.items[index].message = "現在の段落が終わり次第、停止します。" }
+        else if next.items[index].status == "running" { next.items[index].cancel_requested = true; next.items[index].message = "停止を受け付けました。現在のリクエストが終わるまで待つ場合があります。" }
         try store.saveQueue(next); queue = next; changed()
     }
     func cancelProject(_ id: String) throws { if let a = active(id) { try cancel(a.id) } }
     func edit(_ id: String, unit: String, translation: String) throws {
-        guard active(id) == nil, !exports.contains(id), !previews.contains(id) else { throw StudioError("処理完了後、またはキュー取消後に編集できます。") }
+        guard active(id) == nil, !exports.contains(id), !previews.contains(id) else { throw StudioError("翻訳・保存・画像作成の完了後、または翻訳予約を取り消した後に編集できます。") }
         guard !translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw StudioError("翻訳文を入力してください。") }
         var p = try get(id)
         guard let i = p.units.firstIndex(where: { $0.id == unit }) else { throw StudioError("段落が見つかりません。") }
@@ -297,7 +297,7 @@ actor NativeEngine {
         return output
     }
     func export(_ id: String) async throws -> URL {
-        guard active(id) == nil else { throw StudioError("キューの処理完了後に保存できます。") }
+        guard active(id) == nil else { throw StudioError("この資料の順番待ち・翻訳が終わると保存できます。") }
         return try await build(get(id), unique: true)
     }
     func chat(_ id: String, model: String, question: String, useDocument: Bool, slide: Int?) async throws -> (AsyncThrowingStream<ChatDelta, Error>, [Int]) {
@@ -320,7 +320,7 @@ actor NativeEngine {
     }
     func preview(_ id: String, translated: Bool) throws {
         guard !previews.contains(id), !renderBusy else { throw StudioError("現在のプレビュー作成が終わるまでお待ちください。") }
-        if translated && active(id) != nil { throw StudioError("キューの処理完了後にプレビューできます。") }
+        if translated && active(id) != nil { throw StudioError("この資料の順番待ち・翻訳が終わると、翻訳後の画像を作成できます。") }
         var p = try get(id); p.preview_state = "rendering"; p.preview_error = ""
         let record = PreviewRecord(state: "rendering", fingerprint: try TranslationPolicy.previewFingerprint(p, translated: translated))
         if translated { p.translated_preview = record } else { p.source_preview = record }

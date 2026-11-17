@@ -111,7 +111,7 @@ final class ProjectStore {
         let file = root.appendingPathComponent("queue.json")
         guard FileManager.default.fileExists(atPath: file.path) else { return QueueState(paused: false, items: []) }
         do { return try decoder.decode(QueueState.self, from: Data(contentsOf: file)) }
-        catch { throw StudioError("翻訳キューの保存データを読めません。元ファイルは保持しています。") }
+        catch { throw StudioError("翻訳の予約・履歴データを読めません。元ファイルは保持しています。") }
     }
     func saveQueue(_ queue: QueueState) throws { try encoder.encode(queue).write(to: root.appendingPathComponent("queue.json"), options: [.atomic]) }
     private func execute(_ sql: String) throws { guard sqlite3_exec(database, sql, nil, nil, nil) == SQLITE_OK else { throw StudioError("翻訳キャッシュを更新できません。") } }
