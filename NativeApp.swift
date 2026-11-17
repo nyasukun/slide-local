@@ -77,7 +77,6 @@ private let canvas = Color(red: 0.97, green: 0.98, blue: 0.96)
                 return try NativeEngine(store: ProjectStore(root: root))
             }.value
             engine = service
-            let ollama = Process(); ollama.executableURL = URL(fileURLWithPath: "/usr/bin/open"); ollama.arguments = ["-gj", "-a", "Ollama"]; ollama.standardOutput = FileHandle.nullDevice; ollama.standardError = FileHandle.nullDevice; try? ollama.run()
             await refreshModels()
             projects = await service.projects(); await refreshQueue()
             let requested = args.firstIndex(of: "--open-project").flatMap { $0 + 1 < args.count ? args[$0 + 1] : nil }
@@ -92,7 +91,7 @@ private let canvas = Color(red: 0.97, green: 0.98, blue: 0.96)
                 }
             }
             await service.start()
-            notice = "準備できました。資料も会話もこのMacに保存します。"
+            if connected { notice = "準備できました。資料も会話もこのMacに保存します。" }
         } catch { self.error = error.localizedDescription; notice = "起動できませんでした。元データは保持されています。" }
         starting = false
     }
@@ -101,7 +100,7 @@ private let canvas = Color(red: 0.97, green: 0.98, blue: 0.96)
             models = try await service().models(); connected = true
             if !models.contains(where: { $0.name == translationModel }) { translationModel = models.first(where: { $0.name.contains("plamo") })?.name ?? models.first?.name ?? "" }
             if !chatModels.contains(where: { $0.name == chatModel }) { chatModel = chatModels.first(where: { $0.name.contains("qwen") })?.name ?? chatModels.first?.name ?? "" }
-        } catch { connected = false; notice = "Ollamaアプリを起動してモデルを再読み込みしてください。" }
+        } catch { connected = false; notice = "Ollama未接続。CLI構成ではTerminalで brew services start ollama を実行し、「モデルを再読み込み」を押してください。既存GUI構成ではOllamaを手動起動してください。" }
     }
     func refreshQueue() async {
         guard let engine else { return }

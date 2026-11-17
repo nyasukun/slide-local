@@ -13,6 +13,8 @@ python3 -m venv .venv
 
 The default suite checks PPTX editing, unchanged ZIP members, charts and embedded workbooks, ZIP64 sparse offsets and large member counts, migration, locks, cache keys, sequential queues, lifecycle/restart, chat state, and local-only HTTP preflight with a mock URLProtocol. It does not call a real Ollama server or render untrusted documents. The ZIP64 check creates a sparse file with a logical size over 4GiB; it is not a 4GiB download.
 
+The suite also runs dependency-free Python tests for CLI executable resolution and narrow source regressions for the UI startup (not a GUI acceptance test). Run just these with `python3 -m unittest discover -s tests -p 'test_*cli*.py'`.
+
 `reference_pptx.py` is a read-only independent OOXML inspector used as an oracle. There is no legacy web backend in this repository.
 
 ## Optional preview test
@@ -27,7 +29,13 @@ It checks that the renderer policy rejects TCP connections to test-owned IPv4/IP
 
 ## Optional offline integration
 
-Requires `/Applications/Ollama.app`, `/Applications/LibreOffice.app`, existing models under `~/.ollama/models`, and the exact names `plamo-translate:0.8b` / `qwen3.5:4b`. Custom model directories are not supported by this test harness.
+Requires an Ollama CLI (normally `brew install ollama`), `/Applications/LibreOffice.app`, existing models under `~/.ollama/models`, and the exact names `plamo-translate:0.8b` / `qwen3.5:4b`. Custom model directories are not supported by this test harness. The GUI app is not required.
+
+The executable is resolved from `OLLAMA_BIN`, then `ollama` on the caller's `PATH`, then the legacy `/Applications/Ollama.app/Contents/Resources/ollama`. An explicitly set but empty, missing or non-executable `OLLAMA_BIN` is an error, not a reason to silently select another binary. Quote paths containing spaces:
+
+```sh
+OLLAMA_BIN="/path with spaces/ollama" ./tests/run-offline-check.command
+```
 
 ```sh
 ./tests/run-offline-check.command

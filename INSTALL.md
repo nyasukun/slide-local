@@ -26,9 +26,12 @@
 /usr/bin/xcrun swiftc --version
 command -v git
 command -v ollama
-/bin/ls -d /Applications/Ollama.app /Applications/LibreOffice.app
+command -v brew
+/bin/ls -d /Applications/LibreOffice.app
 /usr/sbin/lsof -nP -iTCP:11434 -sTCP:LISTEN
 ```
+
+Homebrewがある場合は `brew services list` と `brew list --formula ollama` も確認します。既存GUI版の有無は `/Applications/Ollama.app` とログイン項目から調べますが、**GUIアプリがなくてもCLIサービスが使えれば合格**です。`OLLAMA_HOST` / `OLLAMA_MODELS` などの既存設定、LaunchAgent、`launchctl getenv OLLAMA_HOST` も確認し、モデル保存先や待受の変更が必要か調べます。設定やログに認証情報があっても公開しないでください。
 
 | 確認項目 | 合格条件 | 不足した場合 |
 | --- | --- | --- |
@@ -64,17 +67,27 @@ cd slide-local
 
 すでにクローン済みならそのフォルダを使います。以降はリポジトリ直下で実行します。アプリをiCloud同期フォルダで運用する必要はありません。
 
-### OllamaとLibreOffice
+### Ollama（標準: CLI版）
 
-公式の [Ollama for macOS](https://ollama.com/download/mac) と [LibreOffice](https://www.libreoffice.org/download/download-libreoffice/) を取得し、Applicationsへ配置してください。LibreOfficeはApple Silicon対応版を選びます。必要な初回起動やOSの確認画面は利用者が完了してください。
+**標準はGUIを使わないCLI＋ログイン時自動起動構成です。** Homebrewがなければ、利用者の了承を得て [Homebrew公式サイト](https://brew.sh/) の手順で準備し、表示されるPATH設定を完了してください。OSの認証や利用条件の確認は利用者が行います。
 
-すでにHomebrewを利用している場合は、代わりに以下でも準備できます。導入済みのソフトを重複インストールする必要はありません。
+CLI版が不足する場合だけ導入します。`--cask` は付けません。まだサービスは起動せず、第3節でローカル専用に設定します。
 
 ```sh
-brew install --cask ollama libreoffice
+brew install ollama
 ```
 
-Homebrew自体は必須ではありません。ソフトの利用条件はそれぞれ確認してください。Gatekeeper、SIP、ファイアウォール等の保護を無効にする手順は不要です。
+裸の `ollama` や `ollama launch` による対話式セットアップは不要です。**Claude Code・Codex等との連携、OllamaへのサインインはSlide Localには不要**で、案内されてもスキップできます。他の開発ツールの接続設定は変更しません。
+
+既存のGUI版や別のサービスが正常なら、そのまま使うこともできます。CLI版への移行は、処理中ジョブがないこと、モデル保存先と既存設定を維持できることを確認し、利用者の了承を得てから行います。GUI版の削除は不要です。GUI版を終了し、そのログイン時自動起動を無効にしてからCLIサービスを開始します。別サービスがある場合も、起動元を特定して二重起動を解消するまでは新規サービスを開始しません。`brew link --overwrite` やモデル削除で競合を解消しないでください。
+
+Homebrewを使わない既存GUI構成では、公式の [Ollama for macOS](https://ollama.com/download/mac) をApplicationsへ配置して手動起動します。Slide Local自身はOllamaを起動・停止しません。
+
+### LibreOffice
+
+[LibreOffice公式版](https://www.libreoffice.org/download/download-libreoffice/) のApple Silicon対応版を取得し、Applicationsへ配置してください。Homebrewでは `brew install --cask libreoffice` でも準備できます。必要な初回起動やOSの確認画面は利用者が完了してください。
+
+ソフトの利用条件はそれぞれ確認してください。Gatekeeper、SIP、ファイアウォール等の保護を無効にする手順は不要です。
 
 ## 3. Ollamaをローカル専用に設定する
 
@@ -86,7 +99,24 @@ Homebrew自体は必須ではありません。ソフトの利用条件はそれ
 }
 ```
 
-OllamaをmacOSアプリとして使う場合、起動環境は次のように設定できます。
+### 標準: CLIサービスをログイン時に自動起動する
+
+上のJSON設定は再ログイン後も有効です。Ollamaの既定の待受は `127.0.0.1:11434` なので、そのまま使います。既存の `OLLAMA_HOST` やサービス定義に外部公開設定がある場合は、利用者と影響を確認して起動元側で修正し、以下の実測チェックに合格するまで進めません。Terminal内の `export` や `launchctl setenv` を永続的なサービス設定の代わりにしないでください。
+
+11434番を使う既存サーバーがないことを再確認してから、**sudoを付けず**に実行します。
+
+```sh
+brew services start ollama
+brew services list
+# このTerminalで使うOllama CLIも同じローカル接続先に限定する
+export OLLAMA_HOST='127.0.0.1:11434'
+```
+
+ユーザーサービスとしてログイン時に自動起動します。Terminalを閉じても動作し、Slide Localを終了しても停止しません。既存のHomebrewサービスにJSON設定の変更を反映する場合は、ジョブ終了と利用者の了承を確認して `brew services restart ollama` を実行します。GUI版や別サービスに対してこのコマンドで再起動しようとしないでください。
+
+### 代替: 既存のGUI版・手動CLI
+
+GUI版を継続利用する場合に限り、起動環境は次のように設定できます。標準のCLIサービスと同時には起動しません。
 
 ```sh
 launchctl setenv OLLAMA_HOST '127.0.0.1:11434'
@@ -95,13 +125,15 @@ launchctl setenv OLLAMA_NO_CLOUD '1'
 export OLLAMA_HOST='127.0.0.1:11434'
 ```
 
-その後Ollamaを通常のメニューから終了し、再起動してください。Terminal内の `export` だけでは、別に起動したGUIアプリに設定が渡りません。`launchctl setenv` は現在のログインセッション向けなので、次回ログイン後も待受を再確認します。クラウド無効のJSON設定は保存されます。別のLaunchAgent等で起動している場合は、そのサービス側の設定と整合させてください。
+その後Ollamaを通常のメニューから終了し、手動で再起動してください。Terminal内の `export` だけでは、別に起動したGUIアプリに設定が渡りません。`launchctl setenv` は現在のログインセッション向けなので、次回ログイン後も待受を再確認します。クラウド無効のJSON設定は保存されます。別のLaunchAgent等で起動している場合は、そのサービス側の設定と整合させてください。
 
 アプリではなくCLIの `ollama serve` を使う構成なら、既存サーバーと二重起動せず、同じ変数をそのプロセスに設定します。Ollamaはアプリ利用中ずっと起動している必要があります。
 
 ```sh
 OLLAMA_HOST=127.0.0.1:11434 OLLAMA_NO_CLOUD=1 ollama serve
 ```
+
+### 起動後の確認（すべての構成で必須）
 
 次を確認します。リダイレクト追従は付けず、ローカル確認ではプロキシを迂回します。
 
@@ -114,6 +146,8 @@ lsof -nP -iTCP:11434 -sTCP:LISTEN
 ```
 
 合格条件は `/api/status` の `cloud.disabled` がJSONの `true` で、待受が `127.0.0.1` または `::1` に限定されていることです。`*`、`0.0.0.0`、`[::]`、LANアドレスでの待受は修正します。APIが404、キーが不明、クラウド有効のままならOllamaのバージョン・設定・起動元を確認し、本文を使ったテストへ進みません。アプリ側の安全確認を削除して回避しないでください。
+
+**ログアウト・再ログイン後にも** `brew services list`、上のAPIチェック、`lsof` を再実行し、自動起動・クラウド無効・ループバック待受が維持されることを確認します。未実施なら「再ログイン後は未確認」と記録します。GUIのログイン項目等が残って二重起動していないことも確認してください。
 
 設定の根拠: [Ollama公式FAQ](https://docs.ollama.com/faq)。このアプリ自身も、各翻訳リクエストとチャット開始前にクラウド無効とローカルモデルを確認します。
 
@@ -221,7 +255,7 @@ AIエージェントがクラウド型の場合、Macを完全に切断すると
 
 | 症状 | 確認すること |
 | --- | --- |
-| Ollama未接続 | Ollamaの起動、11434番、プロセスの待受、モデル再読み込み |
+| Ollama未接続 | CLI標準構成では `brew services list` と `brew services start ollama`、11434番の待受を確認して「モデルを再読み込み」。既存GUI構成ではGUIを手動起動。別構成と二重起動しない |
 | クラウド無効状態を確認できない | `/api/status`、Ollamaの更新、JSONと実際の起動環境、再起動 |
 | モデルが選べない | `/api/tags` の保存済みモデル名、remote項目、取得完了。チャットでPLaMoは表示しない |
 | プレビュー失敗 | LibreOfficeの配置・初回起動、フォント、OSの描画制限。制限なしでの再実行はしない |

@@ -16,6 +16,8 @@ Apple Silicon Mac向けの、SwiftUI製PowerPoint翻訳・資料チャットア�
 
 SwiftUIの画面とSwiftエンジンを1つのアプリにまとめています。実行にPython、Webブラウザ、独自のWebサーバーは必要ありません。Ollamaは別プロセスのローカル推論サービスとして利用します。
 
+Ollamaは **CLI版＋ログイン時自動起動サービス** を標準とし、GUIアプリやClaude Code／Codexとの連携は不要です。Slide LocalはOllamaの起動・停止を行いません。既存GUI版を利用する場合は手動で起動してください。導入・移行は [INSTALL.md](INSTALL.md) を参照してください。
+
 ## 必要な環境
 
 Apple Silicon、macOS 14以降、Xcode Command Line Tools、Ollama、ローカルモデルが必要です。プレビューにはLibreOfficeが必要です。標準構成は翻訳に `plamo-translate:0.8b`、チャットに `qwen3.5:4b` を使用します。メモリ16GB以上を推奨します。これは性能上の目安で、モデルと資料によって必要量は変わります。
