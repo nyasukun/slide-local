@@ -1,12 +1,20 @@
 import Foundation
 import CryptoKit
 
-func atomicSave(_ source: URL, to destination: URL) throws {
+func atomicSave(_ source: URL, to destination: URL, overwrite: Bool = true) throws {
     let fm = FileManager.default
     let staged = destination.deletingLastPathComponent().appendingPathComponent(".SlideLocal-save-" + newID())
     defer { try? fm.removeItem(at: staged) }
     try fm.copyItem(at: source, to: staged)
-    if fm.fileExists(atPath: destination.path) { _ = try fm.replaceItemAt(destination, withItemAt: staged) }
+    if !overwrite {
+        // Hard-linking a staged file on the same filesystem installs it atomically
+        // only if the destination does not exist, including cross-process races.
+        guard link(staged.path, destination.path) == 0 else {
+            if errno == EEXIST { throw CocoaError(.fileWriteFileExists) }
+            throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
+        }
+    }
+    else if fm.fileExists(atPath: destination.path) { _ = try fm.replaceItemAt(destination, withItemAt: staged) }
     else { try fm.moveItem(at: staged, to: destination) }
 }
 

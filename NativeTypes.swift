@@ -19,15 +19,26 @@ struct Project: Codable, Identifiable, Sendable {
     var completed = 0; var total = 0; var fit = true; var include_notes: Bool?
     var slides: [Slide]; var units: [TextUnit]; var chats: [ChatRecord] = []
     var preview_state = "idle"; var preview_version = "source"; var preview_error = ""; var preview_stamp: Double?
+    var translation_request_id: String?
+    var source_preview: PreviewRecord?
+    var translated_preview: PreviewRecord?
+    var chat_generation: String?
+}
+struct PreviewRecord: Codable, Sendable {
+    var state: String
+    var fingerprint: String?
+    var stamp: Double?
+    var error: String?
 }
 struct ProjectItem: Codable, Identifiable, Sendable { var id: String; var filename: String; var slide_count: Int; var state: String }
 struct LocalModel: Codable, Identifiable, Sendable { var name: String; var size: Double; var digest: String?; var id: String { name } }
 struct ChatBubble: Identifiable { var id = UUID(); var role: String; var text: String; var refs: [Int] = []; var failed = false }
-struct QueueOptions: Codable, Sendable { var target: String; var source: String; var model: String; var notes: Bool; var fit: Bool }
+struct QueueOptions: Codable, Sendable, Equatable { var target: String; var source: String; var model: String; var notes: Bool; var fit: Bool }
 struct QueueItem: Codable, Identifiable, Sendable {
     var id: String; var project_id: String; var filename: String; var status: String; var message: String
     var options: QueueOptions; var completed: Int?; var total: Int?
     var created: Double?; var started: Double?; var finished: Double?; var cancel_requested: Bool?
+    var approved_fingerprint: String?
 }
 struct QueueState: Codable, Sendable { var paused: Bool; var items: [QueueItem] }
 func newID() -> String { UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased() }

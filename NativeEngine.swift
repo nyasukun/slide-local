@@ -54,6 +54,9 @@ actor NativeEngine {
     }
     private func commit(_ project: Project) throws {
         try store.save(project); cache(project)
+        if let i = queue.items.firstIndex(where: { $0.project_id == project.id && $0.status == "running" && $0.id == project.translation_request_id }) {
+            queue.items[i].completed = project.completed; queue.items[i].total = project.total
+        }
         if let i = catalog.firstIndex(where: { $0.id == project.id }) { catalog[i].state = project.state }
         else { catalog.insert(ProjectItem(id: project.id, filename: project.filename, slide_count: project.slide_count, state: project.state), at: 0) }
         changed()
@@ -63,18 +66,12 @@ actor NativeEngine {
     func project(_ id: String) throws -> Project {
         var p = try get(id)
         if let item = active(id), item.status == "queued" {
-            p.state = "queued"; p.message = "キューで順番を待っています。"; p.target = item.options.target; p.source = item.options.source; p.model = item.options.model; p.fit = item.options.fit; p.include_notes = item.options.notes
-        } else if p.state == "translating" && active(id) == nil { p.state = "interrupted"; p.message = "前回の翻訳は中断されました。再登録で再開できます。" }
+            p.state = "queued"; p.message = "翻訳の順番を待っています。"; p.target = item.options.target; p.source = item.options.source; p.model = item.options.model; p.fit = item.options.fit; p.include_notes = item.options.notes
+        } else if p.state == "translating" && active(id) == nil { p.state = "interrupted"; p.message = "前回の翻訳は中断されました。未完了部分を翻訳できます。" }
         if p.preview_state == "rendering" && !previews.contains(id) { p.preview_state = "idle" }
         return p
     }
-    func queueSnapshot() -> QueueState {
-        var snapshot = queue
-        for i in snapshot.items.indices {
-            if let p = jobs[snapshot.items[i].project_id] { snapshot.items[i].completed = p.completed; snapshot.items[i].total = p.total }
-        }
-        return snapshot
-    }
+    func queueSnapshot() -> QueueState { queue }
     func start() { kick() }
     private func kick() {
         guard worker == nil, !shuttingDown, !queue.paused, queue.items.contains(where: { $0.status == "queued" }) else { return }
@@ -105,7 +102,10 @@ actor NativeEngine {
         } catch { try? FileManager.default.removeItem(at: stage); throw error }
     }
 
-    func enqueue(_ ids: [String], options: QueueOptions) async throws {
+    func assessTranslation(_ ids: [String], options: QueueOptions) throws -> [TranslationAssessment] {
+        try ids.map { try TranslationPolicy.assess(get($0), options: options) }
+    }
+    func enqueue(_ ids: [String], options: QueueOptions, assessments: [TranslationAssessment] = [], allowReset: Bool = false) async throws {
         guard !ids.isEmpty else { throw StudioError("資料を選択してください。") }
         try await validate(options)
         guard Set(ids).count == ids.count else { throw StudioError("同じ資料が重複しています。") }
@@ -113,11 +113,21 @@ actor NativeEngine {
         for id in ids {
             guard active(id) == nil, !exports.contains(id), !previews.contains(id) else { throw StudioError("選択した資料は処理中または待機中です。") }
             let p = try get(id)
-            additions.append(QueueItem(id: newID(), project_id: id, filename: p.filename, status: "queued", message: "順番を待っています。", options: options, created: Date().timeIntervalSince1970, cancel_requested: false))
+            let current = try TranslationPolicy.assess(p, options: options)
+            let approved = assessments.first { $0.projectID == id }
+            if !assessments.isEmpty {
+                guard approved?.fingerprint == current.fingerprint, approved?.options == options else {
+                    throw StudioError("確認中に資料または設定が変わりました。内容を確認して、もう一度実行してください。")
+                }
+            }
+            guard !current.resetsTranslations || (allowReset && approved != nil) else {
+                throw StudioError("手動修正を含む現在の訳文が消えます。資料と設定を確認してから翻訳し直してください。")
+            }
+            additions.append(QueueItem(id: newID(), project_id: id, filename: p.filename, status: "queued", message: "順番を待っています。", options: options, created: Date().timeIntervalSince1970, cancel_requested: false, approved_fingerprint: current.fingerprint))
         }
         var next = queue; next.items.append(contentsOf: additions); try store.saveQueue(next); queue = next; changed(); kick()
     }
-    func setPaused(_ paused: Bool) throws { var next = queue; next.paused = paused; try store.saveQueue(next); queue = next; changed(); kick() }
+    func setPaused(_ paused: Bool) throws { var next = queue; next.paused = paused; try store.saveQueue(next); queue = next; lastError = nil; changed(); kick() }
     func cancel(_ itemID: String) throws {
         guard let index = queue.items.firstIndex(where: { $0.id == itemID }) else { throw StudioError("キューの項目が見つかりません。") }
         var next = queue
@@ -132,7 +142,8 @@ actor NativeEngine {
         var p = try get(id)
         guard let i = p.units.firstIndex(where: { $0.id == unit }) else { throw StudioError("段落が見つかりません。") }
         p.units[i].translation = translation; p.units[i].status = "done"; p.units[i].error = ""
-        p.preview_state = "idle"; p.preview_stamp = Date().timeIntervalSince1970
+        p.preview_state = "idle"; p.preview_stamp = Date().timeIntervalSince1970; p.translation_request_id = nil
+        p.translated_preview?.state = "stale"
         let selected = p.units.filter { p.include_notes == true || $0.kind != "notes" }
         p.completed = selected.filter { ["done", "preserved"].contains($0.status) }.count
         if p.completed == selected.count { p.state = "complete" }
@@ -142,9 +153,11 @@ actor NativeEngine {
     private func run() async {
         defer { worker = nil }
         while !shuttingDown && !queue.paused, let index = queue.items.firstIndex(where: { $0.status == "queued" }) {
-            queue.items[index].status = "running"; queue.items[index].started = Date().timeIntervalSince1970
-            queue.items[index].message = "翻訳しています。"
-            do { try store.saveQueue(queue) } catch { lastError = error.localizedDescription; changed(); return }
+            var next = queue
+            next.items[index].status = "running"; next.items[index].started = Date().timeIntervalSince1970
+            next.items[index].message = "翻訳を準備しています。"
+            do { try store.saveQueue(next); queue = next }
+            catch { lastError = "翻訳の予約状態を保存できませんでした。保存先を確認し、進行状況から再開してください。\n" + error.localizedDescription; changed(); return }
             let item = queue.items[index]
             changed()
             do {
@@ -163,15 +176,38 @@ actor NativeEngine {
     }
     private func translate(_ item: QueueItem) async throws -> (String, String) {
         let options = item.options
-        let installed = try await inference.models()
+        let installed: [LocalModel]
+        do { installed = try await inference.models() }
+        catch {
+            if cancelled(item.id) { return try stopPreparation(item) }
+            throw error
+        }
         var p = try get(item.project_id)
+        // Actor reentrancy permits cancellation during model lookup. No settings
+        // or translations may be changed before checking the persisted request.
+        if cancelled(item.id) {
+            p.state = shuttingDown ? "interrupted" : "cancelled"
+            p.message = "翻訳の準備中に停止しました。既存の訳文は変更していません。"
+            try commit(p)
+            return (p.state, p.message)
+        }
         guard let installedModel = installed.first(where: { $0.name == options.model }) else { throw StudioError("選択したローカルモデルが見つかりません。") }
         let digest = installedModel.digest ?? options.model
+        let current = try TranslationPolicy.assess(p, options: options)
+        let alreadyStarted = p.translation_request_id == item.id && TranslationPolicy.options(p) == options
+        if !alreadyStarted && ((item.approved_fingerprint != nil && item.approved_fingerprint != current.fingerprint) ||
+                              (current.resetsTranslations && item.approved_fingerprint == nil)) {
+            p.state = "confirmation"; p.message = "訳文を消す前に確認が必要です。設定と内容を確認して、翻訳を予約し直してください。"
+            try commit(p)
+            return ("confirmation", p.message)
+        }
         if (p.target, p.source, p.model) != (options.target, options.source, options.model) {
             for i in p.units.indices { p.units[i].translation = ""; p.units[i].status = "pending"; p.units[i].error = "" }
         }
         p.state = "translating"; p.target = options.target; p.source = options.source; p.model = options.model; p.fit = options.fit; p.include_notes = options.notes
+        p.translation_request_id = item.id
         p.preview_state = "idle"
+        p.translated_preview?.state = "stale"
         let selected = p.units.indices.filter { options.notes || p.units[$0].kind != "notes" }
         p.total = selected.count; p.completed = selected.filter { ["done", "preserved"].contains(p.units[$0].status) }.count
         try commit(p)
@@ -212,25 +248,34 @@ actor NativeEngine {
         else {
             let failures = selected.filter { p.units[$0].status == "error" }.count
             p.state = failures > 0 ? "review" : "complete"
-            p.message = failures > 0 ? "\(failures)か所で翻訳に失敗しました。修正または再実行できます。" : "翻訳とPPTX作成が完了しました。"
+            p.message = failures > 0 ? "\(failures)か所で翻訳に失敗しました。修正または未完了部分の翻訳を実行できます。" : "翻訳が完了しました。内容を確認し、PowerPointの保存先を選んでください。"
         }
         if p.state == "complete" { _ = try await build(p) }
         mergeLiveMetadata(&p)
         try commit(p)
         return (p.state, p.message)
     }
+    private func stopPreparation(_ item: QueueItem) throws -> (String, String) {
+        var p = try get(item.project_id)
+        p.state = shuttingDown ? "interrupted" : "cancelled"
+        p.message = "翻訳の準備中に停止しました。既存の訳文は変更していません。"
+        try commit(p)
+        return (p.state, p.message)
+    }
     private func mergeLiveMetadata(_ project: inout Project) {
         guard let live = jobs[project.id] else { return }
         project.chats = live.chats
+        project.chat_generation = live.chat_generation
         project.preview_state = live.preview_state; project.preview_version = live.preview_version
         project.preview_error = live.preview_error; project.preview_stamp = live.preview_stamp
+        project.source_preview = live.source_preview; project.translated_preview = live.translated_preview
     }
-    private func build(_ p: Project) async throws -> URL {
+    private func build(_ p: Project, unique: Bool = false) async throws -> URL {
         let units = p.units.filter { p.include_notes == true || $0.kind != "notes" }
         guard units.allSatisfy({ ["done", "preserved"].contains($0.status) }) else { throw StudioError("未翻訳の箇所があります。翻訳を実行するか、翻訳文を修正してください。") }
         guard !exports.contains(p.id) else { throw StudioError("PPTXを作成中です。") }
         exports.insert(p.id); defer { exports.remove(p.id) }
-        let folder = try store.folder(p.id), output = folder.appendingPathComponent("translated.pptx"), temporary = folder.appendingPathComponent("translated-" + newID() + ".tmp")
+        let folder = try store.folder(p.id), output = folder.appendingPathComponent(unique ? "export-" + newID() + ".pptx" : "translated.pptx"), temporary = folder.appendingPathComponent("translated-" + newID() + ".tmp")
         try await Task.detached(priority: .utility) {
             defer { try? FileManager.default.removeItem(at: temporary) }
             try PPTX.export(source: folder.appendingPathComponent("source.pptx"), units: units, fit: p.fit, destination: temporary)
@@ -241,7 +286,7 @@ actor NativeEngine {
     }
     func export(_ id: String) async throws -> URL {
         guard active(id) == nil else { throw StudioError("キューの処理完了後に保存できます。") }
-        return try await build(get(id))
+        return try await build(get(id), unique: true)
     }
     func chat(_ id: String, model: String, question: String, useDocument: Bool, slide: Int?) async throws -> (AsyncThrowingStream<ChatDelta, Error>, [Int]) {
         guard !model.lowercased().contains("plamo"), !question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, question.unicodeScalars.count <= 6000 else { throw StudioError("会話モデルと6000文字以内の質問を入力してください。") }
@@ -250,14 +295,23 @@ actor NativeEngine {
         let (messages, refs) = try DocumentReference.messages(try get(id), question: question, useDocument: useDocument, slide: slide)
         return (inference.chat(model: model, messages: messages), refs)
     }
-    func recordChat(_ id: String, question: String, answer: String, refs: [Int], model: String) throws {
-        var p = try get(id); p.chats.append(ChatRecord(question: question, answer: answer, refs: refs, model: model)); try commit(p)
+    func recordChat(_ id: String, question: String, answer: String, refs: [Int], model: String, expectedGeneration: String? = nil) throws {
+        var p = try get(id)
+        if let expectedGeneration, (p.chat_generation ?? "") != expectedGeneration { throw StudioError("会話履歴が変わったため、遅れて届いた回答は保存しませんでした。") }
+        p.chats.append(ChatRecord(question: question, answer: answer, refs: refs, model: model)); p.chat_generation = newID(); try commit(p)
     }
-    func clearChat(_ id: String) throws { var p = try get(id); p.chats = []; try commit(p) }
+    func clearChat(_ id: String, expectedGeneration: String? = nil) throws {
+        var p = try get(id)
+        if let expectedGeneration, (p.chat_generation ?? "") != expectedGeneration { throw StudioError("確認中に会話が更新されました。内容を確認して、削除をやり直してください。") }
+        p.chats = []; p.chat_generation = newID(); try commit(p)
+    }
     func preview(_ id: String, translated: Bool) throws {
         guard !previews.contains(id), !renderBusy else { throw StudioError("現在のプレビュー作成が終わるまでお待ちください。") }
         if translated && active(id) != nil { throw StudioError("キューの処理完了後にプレビューできます。") }
-        var p = try get(id); p.preview_state = "rendering"; p.preview_error = ""; try commit(p)
+        var p = try get(id); p.preview_state = "rendering"; p.preview_error = ""
+        let record = PreviewRecord(state: "rendering", fingerprint: try TranslationPolicy.previewFingerprint(p, translated: translated))
+        if translated { p.translated_preview = record } else { p.source_preview = record }
+        try commit(p)
         previews.insert(id); renderBusy = true
         previewTasks[id] = Task { await self.render(id, translated: translated) }
     }
@@ -269,8 +323,17 @@ actor NativeEngine {
             let version = translated ? "translated" : "source"
             let outdir = folder.appendingPathComponent("preview-" + version)
             try await Task.detached(priority: .utility) { try NativePreview.render(source: source, output: outdir) }.value
-            var live = try get(id); live.preview_state = "ready"; live.preview_version = version; live.preview_stamp = Date().timeIntervalSince1970; live.preview_error = ""; try commit(live)
-        } catch { do { var p = try get(id); p.preview_state = "error"; p.preview_error = error.localizedDescription; try commit(p) } catch { lastError = error.localizedDescription } }
+            var live = try get(id)
+            let fresh = (try TranslationPolicy.previewFingerprint(p, translated: translated)) == (try TranslationPolicy.previewFingerprint(live, translated: translated))
+            let record = PreviewRecord(state: fresh ? "ready" : "stale", fingerprint: try TranslationPolicy.previewFingerprint(p, translated: translated), stamp: Date().timeIntervalSince1970)
+            if translated { live.translated_preview = record } else { live.source_preview = record }
+            live.preview_state = record.state; live.preview_version = version; live.preview_stamp = record.stamp; live.preview_error = ""; try commit(live)
+        } catch { do {
+            var p = try get(id); p.preview_state = "error"; p.preview_error = error.localizedDescription
+            let record = PreviewRecord(state: "error", error: error.localizedDescription)
+            if translated { p.translated_preview = record } else { p.source_preview = record }
+            try commit(p)
+        } catch { lastError = error.localizedDescription } }
     }
     func previewImage(_ id: String, translated: Bool, slide: Int) async throws -> URL {
         let p = try get(id)
