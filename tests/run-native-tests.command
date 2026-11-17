@@ -32,10 +32,12 @@ PY
 .cache/native-tests/ux-safety "$TASK_SCRATCH/ux-safety" "$TASK_SCRATCH/fixture.pptx"
 /usr/bin/swiftc NativeTypes.swift NativeTranslationPolicy.swift tests/NativeUXPolicyTests.swift -parse-as-library -module-cache-path .cache/swift -o .cache/native-tests/ux-policy
 .cache/native-tests/ux-policy
-/usr/bin/swiftc "${TASK_CORE[@]}" NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeStudioTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/studio
+/usr/bin/swiftc "${TASK_CORE[@]}" NativeFileDrop.swift NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeStudioTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/studio
 .cache/native-tests/studio "$TASK_SCRATCH/studio" "$TASK_SCRATCH/fixture.pptx"
+/usr/bin/swiftc "${TASK_CORE[@]}" NativeFileDrop.swift NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeDropTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/drop
+.cache/native-tests/drop "$TASK_SCRATCH/drop" "$TASK_SCRATCH/fixture.pptx"
 if [[ "${NATIVE_LAYOUT_CHECK:-0}" == "1" ]]; then
-    /usr/bin/swiftc "${TASK_CORE[@]}" NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeLayoutTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/layout
+    /usr/bin/swiftc "${TASK_CORE[@]}" NativeFileDrop.swift NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeLayoutTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/layout
     mkdir -p .cache/native-tests/layout-results
     .cache/native-tests/layout .cache/native-tests/layout-results "$TASK_SCRATCH/fixture.pptx"
 fi

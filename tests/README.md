@@ -15,6 +15,8 @@ The default suite checks PPTX editing, unchanged ZIP members, charts and embedde
 
 UX regressions additionally check durable approval before translation resets, stale approvals, excluded-note edits, setup cancellation (including lookup failure), legacy queued requests held for confirmation, recovery without repeating reset, queue persistence failure/retry, historical progress, immutable export files, non-overwriting batch saves, whitespace-only drafts, fixed StudioModel action targets, partial saves, duplicate confirmation, historical retry settings, missing models, chat limits, and deletion generations. Inference is a controlled fake; real storage and engine/model paths run.
 
+Drop regressions use raw `public.file-url` item-provider data, immediate busy feedback and overlay reset, invalid URL rejection, a stalled-provider deadline with late callback, and a renderer spy proving no rendering during import/translation/export and exactly one render after an explicit preview request. They do not automate a Finder mouse drag or reproduce every OS drag-source conversion behavior.
+
 For a native AppKit/SwiftUI rendering smoke check using only synthetic material:
 
 ```sh

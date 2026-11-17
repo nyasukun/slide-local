@@ -3,11 +3,13 @@ import AppKit
 import PDFKit
 
 typealias PPTXWriter = @Sendable (URL, [TextUnit], Bool, URL) throws -> Void
+typealias PreviewRenderer = @Sendable (URL, URL) throws -> Void
 
 actor NativeEngine {
     let store: ProjectStore
     let inference: any LocalInference
     private let pptxWriter: PPTXWriter
+    private let previewRenderer: PreviewRenderer
     private var queue: QueueState
     private var worker: Task<Void, Never>?
     private var listeners: [UUID: AsyncStream<Void>.Continuation] = [:]
@@ -21,8 +23,8 @@ actor NativeEngine {
     private var shuttingDown = false
     private(set) var lastError: String?
 
-    init(store: ProjectStore, inference: any LocalInference = OllamaClient(), pptxWriter: @escaping PPTXWriter = { try PPTX.export(source: $0, units: $1, fit: $2, destination: $3) }) throws {
-        self.store = store; self.inference = inference; self.pptxWriter = pptxWriter
+    init(store: ProjectStore, inference: any LocalInference = OllamaClient(), pptxWriter: @escaping PPTXWriter = { try PPTX.export(source: $0, units: $1, fit: $2, destination: $3) }, previewRenderer: @escaping PreviewRenderer = { try NativePreview.render(source: $0, output: $1) }) throws {
+        self.store = store; self.inference = inference; self.pptxWriter = pptxWriter; self.previewRenderer = previewRenderer
         self.catalog = try store.list()
         self.lastError = store.recoveryMessages.isEmpty ? nil : store.recoveryMessages.joined(separator: "\n")
         var queue = try store.loadQueue()
@@ -335,7 +337,8 @@ actor NativeEngine {
             let source = try await translated ? build(p) : folder.appendingPathComponent("source.pptx")
             let version = translated ? "translated" : "source"
             let outdir = folder.appendingPathComponent("preview-" + version)
-            try await Task.detached(priority: .utility) { try NativePreview.render(source: source, output: outdir) }.value
+            let renderer = previewRenderer
+            try await Task.detached(priority: .utility) { try renderer(source, outdir) }.value
             var live = try get(id)
             let fresh = (try TranslationPolicy.previewFingerprint(p, translated: translated)) == (try TranslationPolicy.previewFingerprint(live, translated: translated))
             let record = PreviewRecord(state: fresh ? "ready" : "stale", fingerprint: try TranslationPolicy.previewFingerprint(p, translated: translated), stamp: Date().timeIntervalSince1970)

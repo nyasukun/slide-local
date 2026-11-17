@@ -172,7 +172,8 @@ struct ChatDeletionRequest: Identifiable {
         let job = try await service().project(id)
         guard selectionGeneration == generation else { return }
         project = job; slide = 1; source = job.source; target = job.target; translationModel = job.model
-        notes = job.include_notes ?? false; fit = job.fit; drafts = [:]; previewImage = nil; previewKey = ""
+        notes = job.include_notes ?? false; fit = job.fit; drafts = [:]
+        preview = false; translatedPreview = false; previewImage = nil; previewKey = ""
         bubbles = job.chats.flatMap { [ChatBubble(role: "user", text: $0.question), ChatBubble(role: "assistant", text: $0.answer, refs: $0.refs)] }
         UserDefaults.standard.set(id, forKey: "LastProject")
         await loadPreviewImage()
@@ -201,20 +202,41 @@ struct ChatDeletionRequest: Identifiable {
         if panel.runModal() == .OK { let urls = panel.urls; Task { await uploadFiles(urls) } }
     }
     func handleDrop(_ providers: [NSItemProvider]) -> Bool {
+        dropTarget = false
         guard !providers.isEmpty, !controlsLocked else { return false }
+        guard providers.allSatisfy({ $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) else {
+            notice = "Finderにある.pptxをドロップするか、「PowerPointを開く…」から選んでください。"
+            return false
+        }
+        working = true; actionBusy = true
+        error = nil
+        notice = "ドロップしたファイルの場所を確認しています…"
+        // Initiate every representation request while the drop callback is live.
+        // Deadlines run concurrently, so N stalled providers do not cost N×15s.
+        let requests = providers.map { FileURLDropLoader.begin($0) }
         Task {
+            defer { working = false; actionBusy = false; dropTarget = false }
             var urls: [URL] = []
-            for provider in providers {
-                let url: URL? = await withCheckedContinuation { continuation in _ = provider.loadObject(ofClass: URL.self) { url, _ in continuation.resume(returning: url) } }
-                if let url { urls.append(url) }
+            var failures: [String] = []
+            for request in requests {
+                do { urls.append(try await request.value()) }
+                catch { failures.append(error.localizedDescription) }
             }
-            if !urls.isEmpty { await uploadFiles(urls) }
+            if !urls.isEmpty { await importFiles(urls, asBatch: providers.count > 1) }
+            else { notice = "ファイルを読み込めませんでした。「PowerPointを開く…」から選び直せます。" }
+            if !failures.isEmpty {
+                let details = failures.joined(separator: "\n")
+                error = error.map { $0 + "\n" + details } ?? details
+            }
         }
         return true
     }
     func uploadFiles(_ urls: [URL]) async {
         guard !controlsLocked else { notice = "現在の操作が終わるまでお待ちください。"; return }
         working = true; actionBusy = true; defer { working = false; actionBusy = false }
+        await importFiles(urls, asBatch: urls.count > 1)
+    }
+    private func importFiles(_ urls: [URL], asBatch: Bool) async {
         do { try await saveDrafts() } catch { self.error = error.localizedDescription; return }
         var imported: [String] = [], failures: [String] = []
         let settings = (source, target, translationModel, notes, fit)
@@ -227,9 +249,9 @@ struct ChatDeletionRequest: Identifiable {
         do {
             projects = try await service().projects()
             if let first = imported.first { stopChat(); try await loadProject(first) }
-            if urls.count > 1 { (source, target, translationModel, notes, fit) = settings }
-            if urls.count > 1 { batchIDs.append(contentsOf: imported) }
-            notice = "\(imported.count)件を読み込みました。言語を選んで「この資料を翻訳する」を押してください。" + (urls.count > 1 ? " 複数資料は「翻訳の進行状況」からまとめて翻訳できます。" : "")
+            if asBatch { (source, target, translationModel, notes, fit) = settings }
+            if asBatch { batchIDs.append(contentsOf: imported) }
+            notice = "\(imported.count)件を読み込みました。言語を選んで「この資料を翻訳する」を押してください。" + (asBatch ? " 複数資料は「翻訳の進行状況」からまとめて翻訳できます。" : "")
         } catch { self.error = error.localizedDescription }
         if !failures.isEmpty { self.error = failures.joined(separator: "\n") }
     }
