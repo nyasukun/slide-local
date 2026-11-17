@@ -3,7 +3,7 @@ set -eu
 TASK_ROOT="${0:A:h}"
 cd "$TASK_ROOT"
 mkdir -p .cache/native .cache/swift
-/usr/bin/swiftc NativeTypes.swift NativeZIP.swift NativePPTX.swift NativeStore.swift NativeOllama.swift NativePreviewPolicy.swift NativeEngine.swift NativeApp.swift -parse-as-library -import-objc-header NativeBridge.h -lz -lsqlite3 -framework PDFKit -framework SwiftUI -framework AppKit -target arm64-apple-macosx14.0 -module-cache-path .cache/swift -swift-version 5 -O -whole-module-optimization -Xlinker -dead_strip -o .cache/native/SlideLocal
+/usr/bin/swiftc NativeTypes.swift NativeTranslationPolicy.swift NativeZIP.swift NativePPTX.swift NativeStore.swift NativeOllama.swift NativePreviewPolicy.swift NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift -parse-as-library -import-objc-header NativeBridge.h -lz -lsqlite3 -framework PDFKit -framework SwiftUI -framework AppKit -target arm64-apple-macosx14.0 -module-cache-path .cache/swift -swift-version 5 -O -whole-module-optimization -Xlinker -dead_strip -o .cache/native/SlideLocal
 TASK_BUNDLE='.cache/native/Slide Local.app'
 mkdir -p "$TASK_BUNDLE/Contents/MacOS" "$TASK_BUNDLE/Contents/Resources"
 cp AppInfo.plist "$TASK_BUNDLE/Contents/Info.plist"

@@ -3,7 +3,7 @@ set -eu
 TASK_ROOT="${0:A:h:h}"
 cd "$TASK_ROOT"
 mkdir -p .cache/native-tests .cache/swift
-TASK_CORE=(NativeTypes.swift NativeZIP.swift NativePPTX.swift NativeStore.swift NativeOllama.swift NativePreviewPolicy.swift)
+TASK_CORE=(NativeTypes.swift NativeTranslationPolicy.swift NativeZIP.swift NativePPTX.swift NativeStore.swift NativeOllama.swift NativePreviewPolicy.swift)
 TASK_SWIFT=(-parse-as-library -import-objc-header NativeBridge.h -lz -lsqlite3 -module-cache-path .cache/swift -swift-version 5)
 /usr/bin/swiftc "${TASK_CORE[@]}" tests/NativeCoreTests.swift "${TASK_SWIFT[@]}" -o .cache/native-tests/check
 .venv/bin/python tests/native-check.py
@@ -27,3 +27,14 @@ PY
 .cache/native-tests/review-regressions "$TASK_SCRATCH/review-chat" "$TASK_SCRATCH/fixture.pptx" chat
 /usr/bin/swiftc NativeTypes.swift NativeStore.swift NativeOllama.swift NativePreviewPolicy.swift tests/NativePrivacyTests.swift "${TASK_SWIFT[@]}" -o .cache/native-tests/privacy
 .cache/native-tests/privacy
+/usr/bin/swiftc "${TASK_CORE[@]}" NativeEngine.swift tests/NativeUXSafetyTests.swift "${TASK_SWIFT[@]}" -framework PDFKit -framework AppKit -o .cache/native-tests/ux-safety
+.cache/native-tests/ux-safety "$TASK_SCRATCH/ux-safety" "$TASK_SCRATCH/fixture.pptx"
+/usr/bin/swiftc NativeTypes.swift NativeTranslationPolicy.swift tests/NativeUXPolicyTests.swift -parse-as-library -module-cache-path .cache/swift -o .cache/native-tests/ux-policy
+.cache/native-tests/ux-policy
+/usr/bin/swiftc "${TASK_CORE[@]}" NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeStudioTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/studio
+.cache/native-tests/studio "$TASK_SCRATCH/studio" "$TASK_SCRATCH/fixture.pptx"
+if [[ "${NATIVE_LAYOUT_CHECK:-0}" == "1" ]]; then
+    /usr/bin/swiftc "${TASK_CORE[@]}" NativeEngine.swift NativeApp.swift NativeWorkflowViews.swift tests/NativeUXSafetyTests.swift tests/NativeLayoutTests.swift "${TASK_SWIFT[@]}" -D STUDIO_TESTS -framework PDFKit -framework AppKit -framework SwiftUI -o .cache/native-tests/layout
+    mkdir -p .cache/native-tests/layout-results
+    .cache/native-tests/layout .cache/native-tests/layout-results "$TASK_SCRATCH/fixture.pptx"
+fi
