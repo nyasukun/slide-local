@@ -13,6 +13,16 @@ python3 -m venv .venv
 
 The default suite checks PPTX editing, unchanged ZIP members, charts and embedded workbooks, ZIP64 sparse offsets and large member counts, migration, locks, cache keys, sequential queues, lifecycle/restart, chat state, and local-only HTTP preflight with a mock URLProtocol. It does not call a real Ollama server or render untrusted documents. The ZIP64 check creates a sparse file with a logical size over 4GiB; it is not a 4GiB download.
 
+UX regressions additionally check durable approval before translation resets, stale approvals, excluded-note edits, setup cancellation (including lookup failure), legacy queued requests held for confirmation, recovery without repeating reset, queue persistence failure/retry, historical progress, immutable export files, non-overwriting batch saves, whitespace-only drafts, fixed StudioModel action targets, partial saves, duplicate confirmation, historical retry settings, missing models, chat limits, and deletion generations. Inference is a controlled fake; real storage and engine/model paths run.
+
+For a native AppKit/SwiftUI rendering smoke check using only synthetic material:
+
+```sh
+NATIVE_LAYOUT_CHECK=1 ./tests/run-native-tests.command
+```
+
+This produces ignored PNGs under `.cache/native-tests/layout-results/` at 1100×760 and 1450×760 with the question panel on/off. It confirms rendering at the requested bounds, not keyboard interaction, VoiceOver, OS save panels, real inference or renderer availability. Inspect images for clipping and perform those checks on a real macOS desktop before claiming complete GUI acceptance. It does not open the user's documents or use their application data.
+
 `reference_pptx.py` is a read-only independent OOXML inspector used as an oracle. There is no legacy web backend in this repository.
 
 ## Optional preview test
