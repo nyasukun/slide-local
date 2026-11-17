@@ -2,9 +2,12 @@ import Foundation
 import AppKit
 import PDFKit
 
+typealias PPTXWriter = @Sendable (URL, [TextUnit], Bool, URL) throws -> Void
+
 actor NativeEngine {
     let store: ProjectStore
     let inference: any LocalInference
+    private let pptxWriter: PPTXWriter
     private var queue: QueueState
     private var worker: Task<Void, Never>?
     private var listeners: [UUID: AsyncStream<Void>.Continuation] = [:]
@@ -18,8 +21,8 @@ actor NativeEngine {
     private var shuttingDown = false
     private(set) var lastError: String?
 
-    init(store: ProjectStore, inference: any LocalInference = OllamaClient()) throws {
-        self.store = store; self.inference = inference
+    init(store: ProjectStore, inference: any LocalInference = OllamaClient(), pptxWriter: @escaping PPTXWriter = { try PPTX.export(source: $0, units: $1, fit: $2, destination: $3) }) throws {
+        self.store = store; self.inference = inference; self.pptxWriter = pptxWriter
         self.catalog = try store.list()
         self.lastError = store.recoveryMessages.isEmpty ? nil : store.recoveryMessages.joined(separator: "\n")
         var queue = try store.loadQueue()
@@ -65,8 +68,12 @@ actor NativeEngine {
     func projects() -> [ProjectItem] { catalog.map { value in var v = value; if let a = active(v.id) { v.state = a.status == "queued" ? "queued" : "translating" }; return v } }
     func project(_ id: String) throws -> Project {
         var p = try get(id)
-        if let item = active(id), item.status == "queued" {
-            p.state = "queued"; p.message = "翻訳の順番を待っています。"; p.target = item.options.target; p.source = item.options.source; p.model = item.options.model; p.fit = item.options.fit; p.include_notes = item.options.notes
+        if let item = active(id) {
+            let preparing = p.translation_request_id != item.id
+            p.state = item.status == "queued" ? "queued" : "translating"
+            if item.status == "queued" { p.message = "翻訳の順番を待っています。" }
+            else if preparing { p.message = "選んだ設定で翻訳を準備しています。" }
+            p.target = item.options.target; p.source = item.options.source; p.model = item.options.model; p.fit = item.options.fit; p.include_notes = item.options.notes
         } else if p.state == "translating" && active(id) == nil { p.state = "interrupted"; p.message = "前回の翻訳は中断されました。未完了部分を翻訳できます。" }
         if p.preview_state == "rendering" && !previews.contains(id) { p.preview_state = "idle" }
         return p
@@ -251,6 +258,10 @@ actor NativeEngine {
             p.message = failures > 0 ? "\(failures)か所で翻訳に失敗しました。修正または未完了部分の翻訳を実行できます。" : "翻訳が完了しました。内容を確認し、PowerPointの保存先を選んでください。"
         }
         if p.state == "complete" { _ = try await build(p) }
+        if cancelled(item.id) {
+            p.state = shuttingDown ? "interrupted" : "cancelled"
+            p.message = shuttingDown ? "PowerPoint作成中に終了しました。次回、未完了処理を復元します。" : "翻訳の停止を反映しました。完了した訳文は保持しています。全て翻訳済みならPowerPointを保存できます。"
+        }
         mergeLiveMetadata(&p)
         try commit(p)
         return (p.state, p.message)
@@ -276,9 +287,10 @@ actor NativeEngine {
         guard !exports.contains(p.id) else { throw StudioError("PPTXを作成中です。") }
         exports.insert(p.id); defer { exports.remove(p.id) }
         let folder = try store.folder(p.id), output = folder.appendingPathComponent(unique ? "export-" + newID() + ".pptx" : "translated.pptx"), temporary = folder.appendingPathComponent("translated-" + newID() + ".tmp")
+        let writer = pptxWriter
         try await Task.detached(priority: .utility) {
             defer { try? FileManager.default.removeItem(at: temporary) }
-            try PPTX.export(source: folder.appendingPathComponent("source.pptx"), units: units, fit: p.fit, destination: temporary)
+            try writer(folder.appendingPathComponent("source.pptx"), units, p.fit, temporary)
             if FileManager.default.fileExists(atPath: output.path) { _ = try FileManager.default.replaceItemAt(output, withItemAt: temporary) }
             else { try FileManager.default.moveItem(at: temporary, to: output) }
         }.value
@@ -296,6 +308,7 @@ actor NativeEngine {
         return (inference.chat(model: model, messages: messages), refs)
     }
     func recordChat(_ id: String, question: String, answer: String, refs: [Int], model: String, expectedGeneration: String? = nil) throws {
+        try Task.checkCancellation()
         var p = try get(id)
         if let expectedGeneration, (p.chat_generation ?? "") != expectedGeneration { throw StudioError("会話履歴が変わったため、遅れて届いた回答は保存しませんでした。") }
         p.chats.append(ChatRecord(question: question, answer: answer, refs: refs, model: model)); p.chat_generation = newID(); try commit(p)

@@ -1,5 +1,18 @@
 import Foundation
 
+final class ExportGate: @unchecked Sendable {
+    private let lock = NSLock()
+    private var entered = false
+    private let semaphore = DispatchSemaphore(value: 0)
+    func hasEntered() -> Bool { lock.lock(); defer { lock.unlock() }; return entered }
+    func release() { semaphore.signal() }
+    func write(source: URL, units: [TextUnit], fit: Bool, destination: URL) throws {
+        lock.lock(); entered = true; lock.unlock()
+        guard semaphore.wait(timeout: .now() + 20) == .success else { throw StudioError("export gate timeout") }
+        try PPTX.export(source: source, units: units, fit: fit, destination: destination)
+    }
+}
+
 // Breaks caught: unapproved/stale resets, cancellation before reset, unsafe legacy
 // recovery, and repeating a committed reset after restart. Only inference is fake.
 actor UXInference: LocalInference {
@@ -155,6 +168,14 @@ actor UXInference: LocalInference {
         try await until { await recoveryEngine.queueSnapshot().items.allSatisfy { $0.status == "complete" } }
         let recoveredOrder = await recoveryEngine.queueSnapshot()
         try check(recoveredOrder.items[0].finished! <= recoveredOrder.items[1].started!, "persistence retry broke FIFO")
+        let buildStore = try ProjectStore(root: root.appendingPathComponent("build-stop")), buildGate = ExportGate()
+        let buildEngine = try NativeEngine(store: buildStore, inference: inference, pptxWriter: { try buildGate.write(source: $0, units: $1, fit: $2, destination: $3) })
+        let h = try await buildEngine.importFile(fixture)
+        try await buildEngine.enqueue([h.id], options: ja)
+        try await until { buildGate.hasEntered() }
+        try await buildEngine.cancelProject(h.id); buildGate.release()
+        try await until { !(await buildEngine.queueSnapshot()).items.contains { ["running", "queued"].contains($0.status) } }
+        try check(await buildEngine.queueSnapshot().items.last?.status == "cancelled", "stop during final build reported complete")
         print("UX safety: unapproved/stale resets, excluded notes, setup stop, legacy hold, durable reset recovery PASS")
     }
 }

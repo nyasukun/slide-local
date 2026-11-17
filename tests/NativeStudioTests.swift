@@ -112,6 +112,34 @@ final class StudioChatInference: LocalInference, @unchecked Sendable {
         try check(chatStudio.previewFreshness.contains("最新"), "matching preview not recognized")
         chatStudio.drafts[deck.units[0].id] = "画像に未反映"
         try check(chatStudio.previewFreshness.contains("更新"), "draft change did not mark preview stale")
+        // A completed answer has a short, non-cancellable atomic-save phase.
+        chatStudio.chatting = true; chatStudio.chatFinalizing = true
+        chatStudio.bubbles = [ChatBubble(role: "assistant", text: "完了した回答")]
+        chatStudio.stopChat()
+        try check(chatStudio.bubbles[0].text == "完了した回答" && chatStudio.chatting, "save-in-progress falsely accepted stop")
+        chatStudio.chatFinalizing = false; chatStudio.chatting = false
+        let cancelledRecord = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            try await chatEngine.recordChat(deck.id, question: "取消済み", answer: "保存しない", refs: [], model: "qwen3.5:4b", expectedGeneration: chatStudio.project?.chat_generation ?? "")
+        }
+        do { try await cancelledRecord.value; throw StudioError("cancelled persistence accepted") }
+        catch { try check(try chatStore.load(deck.id).chats.isEmpty, "cancelled record persisted") }
+
+        let settingStore = try ProjectStore(root: store.root.appendingPathComponent("running-options"))
+        let settingInference = UXInference(), settingEngine = try NativeEngine(store: settingStore, inference: settingInference)
+        try await settingEngine.setPaused(true)
+        let settingDeck = try await settingEngine.importFile(URL(fileURLWithPath: CommandLine.arguments[2]))
+        try await settingEngine.enqueue([settingDeck.id], options: en)
+        await settingInference.blockModels(); try await settingEngine.setPaused(false)
+        let deadline = Date().addingTimeInterval(15)
+        while !(await settingInference.hasEntered()) { if Date() > deadline { throw StudioError("lookup gate timeout") }; await Task.yield() }
+        let settingStudio = StudioModel(engine: settingEngine)
+        try await settingStudio.selectProject(settingDeck.id)
+        try check(settingStudio.currentOptions.target == "en", "running setup showed previous settings")
+        await settingInference.release()
+        while await settingEngine.queueSnapshot().items.last?.status != "complete" { if Date() > deadline { throw StudioError("completion timeout") }; try await Task.sleep(nanoseconds: 5_000_000) }
+        await settingStudio.refreshCurrent(); await settingStudio.refreshQueue()
+        try check(settingStudio.currentOptions.target == "en" && settingStudio.canExport, "finished request left stale unapplied editor options")
         print("Studio actions: fixed targets, draft assessment, cancellation, batch confirmation, duplicate guard, blank draft failure, missing model PASS")
     }
 }

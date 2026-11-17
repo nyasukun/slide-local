@@ -44,6 +44,7 @@ struct ChatDeletionRequest: Identifiable {
     @Published var currentSlideOnly = false
     @Published var bubbles: [ChatBubble] = []
     @Published var chatting = false
+    @Published var chatFinalizing = false
     @Published var dropTarget = false
     @Published var queueItems: [QueueItem] = []
     @Published var queuePaused = false
@@ -183,6 +184,13 @@ struct ChatDeletionRequest: Identifiable {
             let job = try await engine.project(id)
             guard project?.id == id else { return }
             let finished = translating && !["translating", "queued"].contains(job.state)
+            if translating || ["translating", "queued"].contains(job.state) {
+                // Controls are locked for active requests. Follow their actual
+                // options through setup/completion, but preserve genuine edits
+                // to idle-project settings on unrelated metadata refreshes.
+                source = job.source; target = job.target; translationModel = job.model
+                notes = job.include_notes ?? false; fit = job.fit
+            }
             project = job
             if finished { notice = job.message }
             await loadPreviewImage()
@@ -376,8 +384,8 @@ struct ChatDeletionRequest: Identifiable {
         let model = chatModel, useDocument = useDocument, selectedSlide = currentSlideOnly ? slide : nil
         bubbles.append(ChatBubble(role: "user", text: question)); let bubble = ChatBubble(role: "assistant", text: ""); bubbles.append(bubble)
         chatTask = Task {
-            var preparing = true
-            defer { if preparing { actionBusy = false }; if chatGeneration == generation { chatting = false } }
+            var preparing = true, finalizing = false
+            defer { if preparing || finalizing { actionBusy = false }; if chatGeneration == generation { chatting = false; chatFinalizing = false } }
             do {
                 try await saveDrafts(projectID: id, changes: changes)
                 let (stream, refs) = try await service().chat(id, model: model, question: question, useDocument: useDocument, slide: selectedSlide)
@@ -395,6 +403,10 @@ struct ChatDeletionRequest: Identifiable {
                 try Task.checkCancellation()
                 guard chatGeneration == generation, project?.id == id else { throw CancellationError() }
                 if complete {
+                    // No MainActor suspension between the final generation check
+                    // and locking finalization. A finished answer is now saving,
+                    // not an in-progress response that can promise cancellation.
+                    finalizing = true; chatFinalizing = true; actionBusy = true
                     try await service().recordChat(id, question: question, answer: answer, refs: refs, model: model, expectedGeneration: conversationGeneration)
                     if chatGeneration == generation, project?.id == id { await refreshCurrent() }
                 } else { throw StudioError("回答が途中で終わりました。この質問と回答は履歴に保存されません。") }
@@ -404,6 +416,7 @@ struct ChatDeletionRequest: Identifiable {
         }
     }
     func stopChat() {
+        guard !chatFinalizing else { notice = "回答は完了し、履歴に保存中です。保存が終わるまでお待ちください。"; return }
         if chatting, let index = bubbles.lastIndex(where: { $0.role == "assistant" }) { bubbles[index].text += "\n回答を停止しました。この質問と未完了の回答は履歴に保存されません。"; bubbles[index].failed = true }
         chatTask?.cancel(); chatTask = nil; chatGeneration = UUID(); chatting = false
     }
@@ -618,8 +631,8 @@ struct NativeChat: View {
                 TextEditor(text: $studio.chatInput).font(.body).scrollContentBackground(.hidden).frame(height: 58).padding(8).background(canvas).clipShape(RoundedRectangle(cornerRadius: 7)).overlay(alignment: .topLeading) { if studio.chatInput.isEmpty { Text("質問を入力…").font(.body).foregroundStyle(.secondary).padding(12).allowsHitTesting(false) } }.disabled(studio.controlsLocked).accessibilityLabel("質問を入力")
                 HStack {
                     Text("⌘Returnで送信").font(.caption).foregroundStyle(.secondary); Spacer()
-                    Button { studio.chatting ? studio.stopChat() : studio.sendChat() } label: { Label(studio.chatting ? "回答を停止" : "質問を送信", systemImage: studio.chatting ? "stop.fill" : "arrow.up") }
-                        .buttonStyle(.borderedProminent).keyboardShortcut(.return, modifiers: .command).disabled(!studio.chatting && studio.chatBlockReason != nil)
+                    Button { studio.chatting ? studio.stopChat() : studio.sendChat() } label: { Label(studio.chatFinalizing ? "回答を保存中" : studio.chatting ? "回答を停止" : "質問を送信", systemImage: studio.chatting ? "stop.fill" : "arrow.up") }
+                        .buttonStyle(.borderedProminent).keyboardShortcut(.return, modifiers: .command).disabled(studio.chatFinalizing || (!studio.chatting && studio.chatBlockReason != nil))
                 }
                 if let reason = studio.chatBlockReason, !studio.chatInput.isEmpty || !studio.connected || !studio.chatModels.contains(where: { $0.name == studio.chatModel }) { Text(reason).font(.callout).foregroundStyle(.secondary) }
                 if !studio.chatInput.isEmpty { Text("\(studio.chatInputCount) / 6000文字単位（絵文字などは複数）").font(.caption).foregroundStyle(.secondary) }
