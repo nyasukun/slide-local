@@ -28,7 +28,7 @@ actor UXInference: LocalInference {
             gateNext = false; entered = true; await withCheckedContinuation { gate = $0 }
             if failAfterGate { failAfterGate = false; throw StudioError("lookup disconnected") }
         }
-        return available ? [LocalModel(name: "plamo-translate:0.8b", size: 1, digest: "ux-fixture")] : []
+        return available ? [LocalModel(name: "plamo-translate:0.8b", size: 1, digest: "ux-fixture"), LocalModel(name: "cat-translate:1.4b", size: 1, digest: "cat-fixture"), LocalModel(name: "translategemma:12b-it-q4_K_M", size: 1, digest: "gemma-fixture")] : []
     }
     func translate(_ text: String, target: String, model: String, source: String, context: String) async throws -> String { "訳: " + text }
     nonisolated func chat(model: String, messages: [[String: String]]) -> AsyncThrowingStream<ChatDelta, Error> { AsyncThrowingStream { $0.finish() } }

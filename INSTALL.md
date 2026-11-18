@@ -36,8 +36,8 @@ Homebrewがある場合は `brew services list` と `brew list --formula ollama`
 | 確認項目 | 合格条件 | 不足した場合 |
 | --- | --- | --- |
 | OS・CPU | macOS 14以降、Apple Siliconのネイティブ `arm64` セッション | Intel / Windows / Linuxではこのビルド手順を停止。RosettaならネイティブTerminalで再確認 |
-| メモリ | 標準の4Bチャット構成は16GB以上を推奨 | 他アプリを閉じるか小さいローカル会話モデルを選び、性能は別途確認 |
-| ディスク | 初回は空き12GB以上を目安に、資料・出力・プレビュー用の余裕も確保 | モデル保存先とApplication Supportのあるディスクを確認。巨大資料はさらに余裕が必要 |
+| メモリ | 標準のTranslateGemma12B＋4Bチャット構成は24GB以上を推奨 | 他アプリを閉じるか小さいローカルモデルを選び、性能は別途確認 |
+| ディスク | 初回は空き20GB以上を目安に、資料・出力・プレビュー用の余裕も確保 | 標準モデルは合計約11.5GB。モデル保存先とApplication Supportのあるディスクを確認 |
 | ビルド環境 | AppleのSwiftコンパイラ、macOS 14以降のSDK、git | Xcode Command Line Toolsまたは対応するXcodeを準備 |
 | Ollama | 起動でき、後述のAPIチェックに合格するバージョン | 公式版をインストール／更新 |
 | モデル | 翻訳モデルと会話モデルがローカルに存在 | 第4節で取得・登録 |
@@ -159,26 +159,45 @@ lsof -nP -iTCP:11434 -sTCP:LISTEN
 
 既存モデルは `ollama list` と `/api/tags` で確認し、同名のモデルを勝手に上書きしません。モデル項目に `remote_host` / `remote_model` があるもの、`:cloud` / `-cloud` 名のものは使用しません。単にローカルのOllamaにつながることだけでは、モデルがローカルである証明になりません。
 
-### 翻訳: PLaMo 3 Translate 0.8B
+### 翻訳（標準）: TranslateGemma 12B
 
-[公式モデルと利用条件](https://huggingface.co/pfnet/plamo-3-translate-0.8b-GGUF#license) を先に確認してください。アプリのMITライセンスはモデルの利用条件を置き換えません。次のレシピは公式GGUFの固定リビジョンを使います。ダウンロード済みでハッシュが一致すれば再取得は不要です。
+[Google公式モデル](https://huggingface.co/google/translategemma-12b-it)と[Gemma利用規約](https://ai.google.dev/gemma/terms)を確認してください。商用利用可能ですが、MITではなく独自規約です。禁止用途、再配布・サービス提供時の条件があり、会社の利用ルールも確認してください。
+
+未導入の場合だけ[公式Ollama配布](https://ollama.com/library/translategemma:12b-it-q4_K_M)を取得します。
+
+```sh
+ollama pull translategemma:12b-it-q4_K_M
+ollama list
+```
+
+約8.1GBのQ4_K_M版です。検証環境は24GiB Mac、Ollama 0.40.16です。アプリは専用の言語名・言語コード付き指示で訳を1つだけ要求し、周辺文脈やQwen整文は加えません。2Kコンテキスト内に収めるため480バイト以下に分割し、1024トークンの出力枠を確保します。出力上限に達した結果や、段落の一部だけの結果は保存せず要確認にします。
+
+新規資料だけがこのモデルを既定にします。新規資料の原文言語は英語、翻訳先は日本語が既定です。必要なら原文を「自動判定」や別の言語へ変更できます。既存資料の保存済み言語・モデル・訳文・編集履歴・予約設定は変更しません。既存資料をGemmaへ切り替える場合は詳細設定で選び、訳文のリセット確認を行ってください。同じモデルでの「この資料の翻訳を再生成…」は確認後にキャッシュを使わず再生成し、失敗した文章の以前の訳文は保持します。
+
+短文でも時期・期限の混同や、原文内の翻訳指示を訳せない例があります。出力を確認し、必要なら手修正してください。自動言語判定が難しい見出しや混在資料では原文言語を明示してください。
+
+### 任意の旧モデル: CAT-Translate 1.4B（日英専用）
+
+[CyberAgentの公式モデルとMITライセンス](https://huggingface.co/cyberagent/CAT-Translate-1.4b) を先に確認してください。商用利用の事前登録・売上上限はありません。次のレシピは [mmnga-oによるコミュニティGGUF変換版](https://huggingface.co/mmnga-o/CAT-Translate-1.4b-gguf) の固定リビジョンを使います。公式配布のGGUFではありません。会社の利用ルールで変換版の提供元も確認してください。ダウンロード済みでハッシュが一致すれば再取得は不要です。
 
 ```sh
 curl --fail --location --proto '=https' --proto-redir '=https' \
-  --output models/plamo-3-translate-0.8b-Q4_K_M.gguf.partial \
-  'https://huggingface.co/pfnet/plamo-3-translate-0.8b-GGUF/resolve/1cf96ae02133958a20074bfdfab76517bb737d00/plamo-3-translate-0.8b-Q4_K_M.gguf'
+  --output models/CAT-Translate-1.4b-Q4_K_M.gguf.partial \
+  'https://huggingface.co/mmnga-o/CAT-Translate-1.4b-gguf/resolve/fe0ab30f267cd976a4f03d218defa6151af88b87/CAT-Translate-1.4b-Q4_K_M.gguf'
 
-echo '70891ec70dc7ab4205745a38307867c2881b99239f20327927633abfe4bc9ec6  models/plamo-3-translate-0.8b-Q4_K_M.gguf.partial' | shasum -a 256 -c -
+echo '546baf6bb2ddc5d70648edebdd7a4ed7ff76e10e340a2f69ccc9b43507275e07  models/CAT-Translate-1.4b-Q4_K_M.gguf.partial' | shasum -a 256 -c -
 ```
 
 **ハッシュが `OK` の場合だけ** 次へ進めます。不一致なら登録せず、取得元とファイルを確認します。
 
 ```sh
-mv models/plamo-3-translate-0.8b-Q4_K_M.gguf.partial models/plamo-3-translate-0.8b-Q4_K_M.gguf
-ollama create plamo-translate:0.8b -f models/Modelfile
+mv models/CAT-Translate-1.4b-Q4_K_M.gguf.partial models/CAT-Translate-1.4b-Q4_K_M.gguf
+ollama create cat-translate:1.4b -f models/Modelfile
 ```
 
-Ollamaはモデルを自身の保存領域にも取り込みます。GGUFは約573MBなので、ダウンロードと登録で複数コピー分の空きを見込んでください。アプリはPFML3を組み立て `raw=true` で実行し、翻訳先を指定します。同梱Modelfileの通常のCLI用テンプレートは日本語訳です。
+Ollamaはモデルを自身の保存領域にも取り込みます。GGUFは約931MBなので、ダウンロードと登録で複数コピー分の空きを見込んでください。アプリは公式の日英翻訳指示をuserメッセージで送り、ModelfileでSarashinaのチャットテンプレートを適用します。CLIで試す場合も `Translate the following English text into Japanese.\n\nHello.` のように翻訳指示を付けます。Ollama 0.40.16で動作確認しています。
+
+この任意の旧モデルやGGUFファイルを削除する必要はありません。既存のCAT資料はその設定を維持します。CATは日英専用で、短い見出しの自動判定や説明混入に限界があります。原文言語を明示し、出力を確認してください。
 
 ### チャット: Qwen
 
@@ -189,7 +208,7 @@ ollama pull qwen3.5:4b
 ollama list
 ```
 
-他のローカル会話モデルも選べますが、PLaMoは翻訳専用なのでチャットには使いません。別モデルを選んだ場合は標準モデルでの確認と区別して記録します。モデルの取得に失敗した場合はオンラインで解決し、クラウドモデルへ切り替えて済ませないでください。
+他のローカル会話モデルも選べますが、TranslateGemma・CAT-Translate・PLaMoは翻訳専用なのでチャットには使いません。別モデルを選んだ場合は標準モデルでの確認と区別して記録します。モデルの取得に失敗した場合はオンラインで解決し、クラウドモデルへ切り替えて済ませないでください。
 
 ### 任意: 翻訳モデルを事前ロード
 
@@ -197,11 +216,11 @@ ollama list
 curl --noproxy '*' --fail --silent --show-error --max-time 120 \
   http://127.0.0.1:11434/api/generate \
   -H 'Content-Type: application/json' \
-  -d '{"model":"plamo-translate:0.8b","keep_alive":-1,"stream":false}'
+  -d '{"model":"translategemma:12b-it-q4_K_M","keep_alive":-1,"stream":false}'
 ollama ps
 ```
 
-アプリは翻訳モデルに `keep_alive=-1`、会話モデルに30分を指定します。初回読み込み、Ollama再起動、メモリ不足による追い出しの後には再ロードが必要です。メモリを解放するときは `ollama stop plamo-translate:0.8b` を使います。
+アプリは翻訳モデルに `keep_alive=-1`、会話モデルに30分を指定します。初回読み込み、Ollama再起動、メモリ不足による追い出しの後には再ロードが必要です。メモリを解放するときは、処理中でないことを確認して `ollama stop translategemma:12b-it-q4_K_M` を使います。
 
 ## 5. インストールへ進むための合格判定
 
@@ -236,6 +255,8 @@ open '/Applications/Slide Local.app'
 
 書き込み権限がない場合はFinderでApplicationsへコピーし、必要なOS認証は利用者が行います。既存アプリがある場合は起動中の処理を終えて終了し、アプリ本体を退避してから置き換えます。上の `ditto` を既存バンドルへ無条件に重ねないでください。Application Supportのデータは削除しません。
 
+**ビルドとインストールは別です。** 更新後は、実際の起動先 `/Applications/Slide Local.app` の `Info.plist` のバージョン・buildと、`Contents/MacOS/SlideLocal` のSHA256がビルドしたバンドルと一致することを確認してください。作業フォルダ内のアプリだけを検証して更新完了としないでください。保存済みの訳文はアプリ更新だけでは変わらないため、新しい翻訳処理を適用するには「この資料の翻訳を再生成…」を実行します。
+
 Dockのアイコンを右クリックし、「オプション」→「Dockに追加／Dockに保持」を選びます。登録先がApplications内のアプリであることを確認し、ビルドフォルダ側のアイコンと取り違えないようにします。
 
 ## 7. 架空の資料で受け入れ確認する
@@ -261,7 +282,7 @@ AIエージェントがクラウド型の場合、Macを完全に切断すると
 | --- | --- |
 | Ollama未接続 | CLI標準構成では `brew services list` と `brew services start ollama`、11434番の待受を確認して「接続・モデルを確認」。既存GUI構成ではGUIを手動起動。別構成と二重起動しない |
 | クラウド無効状態を確認できない | `/api/status`、Ollamaの更新、JSONと実際の起動環境、再起動 |
-| モデルが選べない | `/api/tags` の保存済みモデル名、remote項目、取得完了。チャットでPLaMoは表示しない |
+| モデルが選べない | `/api/tags` の保存済みモデル名、remote項目、取得完了。チャットでTranslateGemma・CAT-Translate・PLaMoは表示しない |
 | ドロップしても資料を読み込めない | ファイルの場所の取得中は進捗を表示し、取得できなければ15秒で待機を打ち切って案内します。「PowerPointを開く…」からFinderにある.pptxを選び直してください。この15秒はファイルの場所の取得期限で、資料全体の読み込み時間の上限ではありません |
 | プレビュー失敗 | LibreOfficeの配置・初回起動、フォント、OSの描画制限。制限なしでの再実行はしない |
 | ビルド失敗 | Apple Siliconネイティブ環境、選択中のSwift/SDK、空きディスク |

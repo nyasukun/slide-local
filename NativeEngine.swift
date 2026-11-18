@@ -88,6 +88,7 @@ actor NativeEngine {
     }
     func models() async throws -> [LocalModel] { try await inference.models() }
     private func validate(_ options: QueueOptions) async throws {
+        if let error = LocalModel.translationLanguageError(model: options.model, source: options.source, target: options.target) { throw StudioError(error) }
         guard !options.target.isEmpty, [options.source, options.target].allSatisfy({ $0.isEmpty || $0.range(of: "^[a-z]{2,3}(?:-[a-z]+)?$", options: .regularExpression) != nil }) else { throw StudioError("言語コードが正しくありません。") }
         let installed = try await inference.models()
         guard installed.contains(where: { $0.name == options.model }) else { throw StudioError("このMacに保存されたOllamaモデルを選択してください。") }
@@ -111,10 +112,10 @@ actor NativeEngine {
         } catch { try? FileManager.default.removeItem(at: stage); throw error }
     }
 
-    func assessTranslation(_ ids: [String], options: QueueOptions) throws -> [TranslationAssessment] {
-        try ids.map { try TranslationPolicy.assess(get($0), options: options) }
+    func assessTranslation(_ ids: [String], options: QueueOptions, regenerate: Bool = false) throws -> [TranslationAssessment] {
+        try ids.map { try TranslationPolicy.assess(get($0), options: options, regenerate: regenerate) }
     }
-    func enqueue(_ ids: [String], options: QueueOptions, assessments: [TranslationAssessment] = [], allowReset: Bool = false) async throws {
+    func enqueue(_ ids: [String], options: QueueOptions, assessments: [TranslationAssessment] = [], allowReset: Bool = false, regenerate: Bool = false) async throws {
         guard !ids.isEmpty else { throw StudioError("資料を選択してください。") }
         try await validate(options)
         guard Set(ids).count == ids.count else { throw StudioError("同じ資料が重複しています。") }
@@ -122,17 +123,20 @@ actor NativeEngine {
         for id in ids {
             guard active(id) == nil, !exports.contains(id), !previews.contains(id) else { throw StudioError("選択した資料は処理中または待機中です。") }
             let p = try get(id)
-            let current = try TranslationPolicy.assess(p, options: options)
+            let current = try TranslationPolicy.assess(p, options: options, regenerate: regenerate)
             let approved = assessments.first { $0.projectID == id }
             if !assessments.isEmpty {
-                guard approved?.fingerprint == current.fingerprint, approved?.options == options else {
+                guard approved?.fingerprint == current.fingerprint, approved?.options == options, approved?.regenerate == regenerate else {
                     throw StudioError("確認中に資料または設定が変わりました。内容を確認して、もう一度実行してください。")
                 }
+            }
+            guard !regenerate || (allowReset && approved != nil) else {
+                throw StudioError("翻訳の再生成には、手修正を含む訳文の置換確認が必要です。")
             }
             guard !current.resetsTranslations || (allowReset && approved != nil) else {
                 throw StudioError("手動修正を含む現在の訳文が消えます。資料と設定を確認してから翻訳し直してください。")
             }
-            additions.append(QueueItem(id: newID(), project_id: id, filename: p.filename, status: "queued", message: "順番を待っています。", options: options, created: Date().timeIntervalSince1970, cancel_requested: false, approved_fingerprint: current.fingerprint))
+            additions.append(QueueItem(id: newID(), project_id: id, filename: p.filename, status: "queued", message: "順番を待っています。", options: options, created: Date().timeIntervalSince1970, cancel_requested: false, approved_fingerprint: current.fingerprint, regenerate: regenerate ? true : nil))
         }
         var next = queue; next.items.append(contentsOf: additions); try store.saveQueue(next); queue = next; changed(); kick()
     }
@@ -150,7 +154,7 @@ actor NativeEngine {
         guard !translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw StudioError("翻訳文を入力してください。") }
         var p = try get(id)
         guard let i = p.units.firstIndex(where: { $0.id == unit }) else { throw StudioError("段落が見つかりません。") }
-        p.units[i].translation = translation; p.units[i].status = "done"; p.units[i].error = ""
+        p.units[i].translation = translation; p.units[i].status = "done"; p.units[i].error = ""; p.units[i].regenerate_pending = nil
         p.preview_state = "idle"; p.preview_stamp = Date().timeIntervalSince1970; p.translation_request_id = nil
         p.translated_preview?.state = "stale"
         let selected = p.units.filter { p.include_notes == true || $0.kind != "notes" }
@@ -201,17 +205,22 @@ actor NativeEngine {
             return (p.state, p.message)
         }
         guard let installedModel = installed.first(where: { $0.name == options.model }) else { throw StudioError("選択したローカルモデルが見つかりません。") }
-        let digest = installedModel.digest ?? options.model
-        let current = try TranslationPolicy.assess(p, options: options)
+        let digest = LocalModel.translationCacheDigest(installedModel.digest ?? options.model, model: options.model)
+        let current = try TranslationPolicy.assess(p, options: options, regenerate: item.regenerate == true)
         let alreadyStarted = p.translation_request_id == item.id && TranslationPolicy.options(p) == options
         if !alreadyStarted && ((item.approved_fingerprint != nil && item.approved_fingerprint != current.fingerprint) ||
-                              (current.resetsTranslations && item.approved_fingerprint == nil)) {
+                              ((current.resetsTranslations || item.regenerate == true) && item.approved_fingerprint == nil)) {
             p.state = "confirmation"; p.message = "訳文を消す前に確認が必要です。設定と内容を確認して、翻訳を予約し直してください。"
             try commit(p)
             return ("confirmation", p.message)
         }
         if (p.target, p.source, p.model) != (options.target, options.source, options.model) {
-            for i in p.units.indices { p.units[i].translation = ""; p.units[i].status = "pending"; p.units[i].error = "" }
+            for i in p.units.indices { p.units[i].translation = ""; p.units[i].status = "pending"; p.units[i].error = ""; p.units[i].regenerate_pending = nil }
+        }
+        if item.regenerate == true && !alreadyStarted {
+            for i in p.units.indices where options.notes || p.units[i].kind != "notes" {
+                p.units[i].status = "pending"; p.units[i].error = ""; p.units[i].regenerate_pending = true
+            }
         }
         p.state = "translating"; p.target = options.target; p.source = options.source; p.model = options.model; p.fit = options.fit; p.include_notes = options.notes
         p.translation_request_id = item.id
@@ -232,10 +241,11 @@ actor NativeEngine {
                     let neighbors = selected.map { p.units[$0] }.filter { $0.slides.first == unit.slides.first && $0.id != unit.id }.map { $0.source }.joined(separator: "\n")
                     let context = String(String.UnicodeScalarView(neighbors.unicodeScalars.prefix(350)))
                     let key = try ProjectStore.cacheKey(digest: digest, target: options.target, source: options.source, context: context, text: unit.source)
-                    if let cached = try store.cacheGet(key) { value = cached }
+                    if item.regenerate != true, unit.regenerate_pending != true, let cached = try store.cacheGet(key) { value = cached }
                     else {
                         var parts: [String] = []
-                        for chunk in OllamaClient.splitText(unit.source) {
+                        let chunkLimit = LocalModel.isTranslateGemma(options.model) ? 480 : 1100
+                        for chunk in OllamaClient.splitText(unit.source, limit: chunkLimit) {
                             if cancelled(item.id) { throw CancellationError() }
                             parts.append(try await inference.translate(chunk, target: options.target, model: options.model, source: options.source, context: context))
                         }
@@ -244,7 +254,7 @@ actor NativeEngine {
                     }
                     status = "done"
                 }
-                p.units[index].translation = value; p.units[index].status = status; p.units[index].error = ""
+                p.units[index].translation = value; p.units[index].status = status; p.units[index].error = ""; p.units[index].regenerate_pending = nil
             } catch is CancellationError { break }
             catch { p.units[index].status = "error"; p.units[index].error = error.localizedDescription }
             // Chat may finish while a model call yields; retain the latest persisted conversation.
@@ -303,7 +313,7 @@ actor NativeEngine {
         return try await build(get(id), unique: true)
     }
     func chat(_ id: String, model: String, question: String, useDocument: Bool, slide: Int?) async throws -> (AsyncThrowingStream<ChatDelta, Error>, [Int]) {
-        guard !model.lowercased().contains("plamo"), !question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, question.unicodeScalars.count <= 6000 else { throw StudioError("会話モデルと6000文字以内の質問を入力してください。") }
+        guard !LocalModel.isTranslationOnly(model), !question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, question.unicodeScalars.count <= 6000 else { throw StudioError("会話モデルと6000文字以内の質問を入力してください。") }
         let available = try await inference.models()
         guard available.contains(where: { $0.name == model }) else { throw StudioError("このMacの会話モデルを選択してください。") }
         let (messages, refs) = try DocumentReference.messages(try get(id), question: question, useDocument: useDocument, slide: slide)

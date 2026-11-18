@@ -10,6 +10,7 @@ struct TranslationAssessment: Sendable {
     let resetsTranslations: Bool
     let translatedCount: Int
     let options: QueueOptions
+    var regenerate = false
 }
 
 enum TranslationPolicy {
@@ -53,11 +54,11 @@ enum TranslationPolicy {
             + project.units.flatMap { [$0.id, $0.kind, $0.source, $0.translation, $0.status] }
         return SHA256.hash(data: try JSONEncoder().encode(values)).map { String(format: "%02x", $0) }.joined()
     }
-    static func assess(_ p: Project, options: QueueOptions) throws -> TranslationAssessment {
-        let count = p.units.filter { !$0.translation.isEmpty }.count
+    static func assess(_ p: Project, options: QueueOptions, regenerate: Bool = false) throws -> TranslationAssessment {
+        let count = p.units.filter { !$0.translation.isEmpty && (!regenerate || options.notes || $0.kind != "notes" || changesLanguageOrModel(p, options)) }.count
         return TranslationAssessment(projectID: p.id, filename: p.filename, fingerprint: try fingerprint(p),
-                                     resetsTranslations: count > 0 && changesLanguageOrModel(p, options),
-                                     translatedCount: count, options: options)
+                                     resetsTranslations: count > 0 && (regenerate || changesLanguageOrModel(p, options)),
+                                     translatedCount: count, options: options, regenerate: regenerate)
     }
     static func exportBlockReason(project p: Project, drafts: [String: String], options: QueueOptions, busy: Bool) -> String? {
         if busy { return "現在の保存・読み込みが終わるまでお待ちください。" }

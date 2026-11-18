@@ -63,6 +63,11 @@ struct TranslationActionCard: View {
                         if let reason = studio.exportBlockReason { Label(reason, systemImage: "info.circle").font(.callout).foregroundStyle(.secondary) }
                         else { exportAction }
                     }
+                    if phase != .queued && phase != .running && !p.units.isEmpty {
+                        Button("この資料の翻訳を再生成…", action: studio.regenerateTranslation)
+                            .disabled(studio.translationBlockReason != nil)
+                        Text("キャッシュを使わず、現在の対象文章を翻訳し直します。手修正を含む訳文の置き換え前に確認します。").font(.callout).foregroundStyle(.secondary)
+                    }
                 }
             }
         }
@@ -82,12 +87,21 @@ struct TranslationActionCard: View {
             HStack(spacing: 12) {
                 Picker("原文の言語", selection: $studio.source) {
                     Text("自動判定").tag("")
-                    ForEach(languages, id: \.0) { Text($0.1).tag($0.0) }
+                    if !studio.source.isEmpty && !studio.translationLanguages.contains(where: { $0.0 == studio.source }) {
+                        Text("\(studio.source)（このモデルでは非対応）").tag(studio.source)
+                    }
+                    ForEach(studio.translationLanguages, id: \.0) { Text($0.1).tag($0.0) }
                 }
                 Image(systemName: "arrow.right").accessibilityHidden(true)
                 Picker("翻訳する言語", selection: $studio.target) {
-                    ForEach(languages, id: \.0) { Text($0.1).tag($0.0) }
+                    if !studio.translationLanguages.contains(where: { $0.0 == studio.target }) {
+                        Text("\(studio.target)（このモデルでは非対応）").tag(studio.target)
+                    }
+                    ForEach(studio.translationLanguages, id: \.0) { Text($0.1).tag($0.0) }
                 }
+            }
+            if LocalModel.isCATTranslation(studio.translationModel) {
+                Text("CAT-Translateは日英専用です。短文・固有名詞で自動判定が難しい場合は、原文の言語を指定してください。").font(.callout).foregroundStyle(.secondary)
             }
             DisclosureGroup("詳細設定：モデル・発表者ノート・文字サイズ") {
                 VStack(alignment: .leading, spacing: 12) {
@@ -155,8 +169,12 @@ struct TranslationConfirmationSheet: View {
     let request: TranslationRequest
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Label("現在の訳文を消して翻訳し直しますか？", systemImage: "exclamationmark.triangle").font(.title2)
-            Text("下記の対象には、手動修正と翻訳対象から外したノートの訳文も含まれます。この操作は取り消せません。")
+            Label(request.regenerate ? "キャッシュを使わず翻訳を再生成しますか？" : "現在の訳文を消して翻訳し直しますか？", systemImage: "exclamationmark.triangle").font(.title2)
+            if request.regenerate {
+                Text("現在の対象文章を再生成し、手修正を含む訳文を成功した文章から置き換えます。同じ言語・モデルなら失敗した文章の以前の訳文は保持し、要確認にします。言語・モデルも変更する場合は、対象外ノートを含む既存訳文を消して処理します。この操作は取り消せません。")
+            } else {
+                Text("下記の対象には、手動修正と翻訳対象から外したノートの訳文も含まれます。この操作は取り消せません。")
+            }
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("適用する設定").font(.headline)
@@ -164,7 +182,7 @@ struct TranslationConfirmationSheet: View {
                     ForEach(request.assessments, id: \.projectID) { assessment in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(assessment.filename).fontWeight(.medium).textSelection(.enabled)
-                            Text("資料ID \(assessment.projectID.prefix(8)) · " + (assessment.resetsTranslations ? "\(assessment.translatedCount)件の訳文を消去" : "既存訳文の消去なし"))
+                            Text("資料ID \(assessment.projectID.prefix(8)) · " + (assessment.resetsTranslations ? "\(assessment.translatedCount)件の訳文を\(request.regenerate ? "置換" : "消去")" : "既存訳文の消去なし"))
                                 .font(.callout).foregroundStyle(.secondary)
                         }
                     }
@@ -174,7 +192,7 @@ struct TranslationConfirmationSheet: View {
             HStack {
                 Button("キャンセル") { studio.dismissTranslation(request) }.keyboardShortcut(.cancelAction)
                 Spacer()
-                Button("訳文を消して翻訳を予約する", role: .destructive) { studio.confirmTranslation(request) }
+                Button(request.regenerate ? "翻訳の再生成を予約する" : "訳文を消して翻訳を予約する", role: .destructive) { studio.confirmTranslation(request) }
             }
         }.padding(26).frame(width: 600).interactiveDismissDisabled()
     }

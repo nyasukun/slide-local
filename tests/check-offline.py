@@ -72,7 +72,7 @@ def main():
             result['output_pptx_bytes']=pdf.stat().st_size
             result['source_sha256']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in ROOT.glob('Native*.swift')}
             (ROOT/'tests/output/offline-verification.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
-            print('OFFLINE PASS: PLaMo translation (2 queued decks), Qwen document chat, editable PPTX, LibreOffice/PDFKit preview.',flush=True)
+            print('OFFLINE PASS: TranslateGemma translation (2 queued decks), Qwen document chat, editable PPTX, LibreOffice/PDFKit preview.',flush=True)
             print('Translation:',result['translation']);print('Answer:',result['answer']);print('Inference seconds:',round(result['inference_seconds'],2))
     finally:
         if server is not None and server.poll() is None:

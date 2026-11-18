@@ -4,7 +4,7 @@ import Foundation
     static func check(_ value: Bool, _ message: String) throws { if !value { throw StudioError(message) } }
     static func main() throws {
         var p = Project(id: "test", filename: "test.pptx", created: 0, slide_count: 1, image_count: 0, slides: [], units: [])
-        let options = QueueOptions(target: "ja", source: "", model: "plamo-translate:0.8b", notes: false, fit: true)
+        let options = QueueOptions(target: "ja", source: "en", model: p.model, notes: false, fit: true)
         try check(TranslationPolicy.exportBlockReason(project: p, drafts: [:], options: options, busy: false) == nil, "zero-unit deck blocked")
         p.units = [TextUnit(id: "u", part: "slide", index: 0, kind: "slide", source: "Hello", slides: [1])]
         try check(TranslationPolicy.exportBlockReason(project: p, drafts: ["u": " \n"], options: options, busy: false) != nil, "blank draft export allowed")

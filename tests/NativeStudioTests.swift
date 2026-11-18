@@ -33,6 +33,46 @@ struct DisconnectedInference: LocalInference {
         let a = try await engine.importFile(URL(fileURLWithPath: CommandLine.arguments[2]))
         let b = try await engine.importFile(URL(fileURLWithPath: CommandLine.arguments[2]))
         let studio = StudioModel(engine: engine)
+        try check(a.model == "translategemma:12b-it-q4_K_M" && studio.translationModel == "translategemma:12b-it-q4_K_M", "new imports and initial selection must use Gemma")
+        try check(a.source == "en" && b.source == "en", "new imports must default source language to English")
+        try check(studio.source == "en" && studio.currentOptions.source == "en", "initial Studio selection must explicitly use English")
+        studio.models = [LocalModel(name: "translategemma:12b-it-q4_K_M", size: 1), LocalModel(name: "cat-translate:1.4b", size: 1), LocalModel(name: "plamo-translate:0.8b", size: 1), LocalModel(name: "qwen3.5:4b", size: 1)]
+        try check(studio.chatModels.map(\.name) == ["qwen3.5:4b"], "translation-only models offered for chat")
+        let legacy = Project(id: newID(), filename: "legacy.pptx", created: 0, slide_count: 0, image_count: 0, model: "plamo-translate:0.8b", slides: [], units: [])
+        let restored = try JSONDecoder().decode(Project.self, from: JSONEncoder().encode(legacy))
+        try check(restored.model == "plamo-translate:0.8b", "saved PLaMo settings changed")
+        let legacyStore = try ProjectStore(root: store.root.appendingPathComponent("existing-cat"))
+        var savedCAT = a
+        savedCAT.model = "cat-translate:1.4b"
+        savedCAT.source = ""
+        savedCAT.units[0].translation = "既存の手修正"
+        savedCAT.units[0].status = "done"
+        savedCAT.chats = [ChatRecord(question: "既存の質問", answer: "既存の回答", refs: [1], model: "qwen3.5:4b")]
+        try legacyStore.save(savedCAT)
+        let originalBytes = try Data(contentsOf: legacyStore.folder(savedCAT.id).appendingPathComponent("project.json"))
+        let legacyEngine = try NativeEngine(store: legacyStore, inference: UXInference())
+        let legacyStudio = StudioModel(engine: legacyEngine)
+        try await legacyStudio.selectProject(savedCAT.id)
+        await legacyStudio.refreshModels()
+        try check(legacyStudio.translationModel == "cat-translate:1.4b" && !legacyStudio.settingsChanged, "opening CAT project replaced saved model with Gemma")
+        try check(legacyStudio.source.isEmpty && legacyStudio.currentOptions.source.isEmpty, "opening old auto-detection project replaced its saved language")
+        try check(legacyStudio.project?.units[0].translation == "既存の手修正" && legacyStudio.bubbles.count == 2, "opening CAT project lost edits/history")
+        try check(try Data(contentsOf: legacyStore.folder(savedCAT.id).appendingPathComponent("project.json")) == originalBytes, "opening legacy project rewrote saved bytes")
+        try check(await legacyEngine.queueSnapshot().items.isEmpty, "opening legacy project automatically queued translation")
+        do {
+            _ = try await engine.chat(a.id, model: "translategemma:12b-it-q4_K_M", question: "質問", useDocument: false, slide: nil)
+            throw StudioError("Gemma accepted as chat model")
+        } catch let e as StudioError { try check(e.message != "Gemma accepted as chat model", e.message) }
+        do {
+            _ = try await engine.chat(a.id, model: "cat-translate:1.4b", question: "質問", useDocument: false, slide: nil)
+            throw StudioError("CAT accepted as chat model")
+        } catch let e as StudioError { try check(e.message != "CAT accepted as chat model", e.message) }
+        let invalid = QueueOptions(target: "fr", source: "en", model: "cat-translate:1.4b", notes: false, fit: true)
+        do {
+            try await engine.enqueue([a.id], options: invalid)
+            throw StudioError("CAT accepted unsupported language")
+        } catch let e as StudioError { try check(e.message != "CAT accepted unsupported language", e.message) }
+        try check(await engine.queueSnapshot().items.isEmpty, "invalid CAT settings enqueued work")
         try await studio.selectProject(a.id)
         let first = a.units.first { $0.kind != "notes" }!
         studio.drafts[first.id] = "手で修正した文章"
@@ -145,6 +185,26 @@ struct DisconnectedInference: LocalInference {
         while await settingEngine.queueSnapshot().items.last?.status != "complete" { if Date() > deadline { throw StudioError("completion timeout") }; try await Task.sleep(nanoseconds: 5_000_000) }
         await settingStudio.refreshCurrent(); await settingStudio.refreshQueue()
         try check(settingStudio.currentOptions.target == "en" && settingStudio.canExport, "finished request left stale unapplied editor options")
+        try await settingEngine.setPaused(true)
+        let regenerateUnit = settingStudio.project!.units.first { $0.kind != "notes" }!
+        settingStudio.drafts[regenerateUnit.id] = "再生成前の手修正"
+        settingStudio.regenerateTranslation()
+        try await until { settingStudio.pendingTranslation != nil }
+        let regenerateRequest = settingStudio.pendingTranslation!
+        try check(regenerateRequest.regenerate && regenerateRequest.assessments.first?.regenerate == true, "regeneration skipped explicit confirmation")
+        let existingQueueCount = await settingEngine.queueSnapshot().items.count
+        settingStudio.dismissTranslation(regenerateRequest)
+        try check(try settingStore.load(settingDeck.id).units.first { $0.id == regenerateUnit.id }?.translation == "再生成前の手修正", "regeneration cancel lost draft")
+        try check(await settingEngine.queueSnapshot().items.count == existingQueueCount, "regeneration cancellation enqueued work")
+        settingStudio.regenerateTranslation()
+        try await until { settingStudio.pendingTranslation != nil }
+        let confirmedRegeneration = settingStudio.pendingTranslation!
+        settingStudio.confirmTranslation(confirmedRegeneration)
+        settingStudio.confirmTranslation(confirmedRegeneration)
+        try await until { !settingStudio.actionBusy }
+        let regeneratedQueue = await settingEngine.queueSnapshot()
+        try check(regeneratedQueue.items.count == existingQueueCount + 1 && regeneratedQueue.items.last?.regenerate == true, "regeneration confirmation lost mode or duplicated request")
+        try await settingEngine.cancel(regeneratedQueue.items.last!.id)
         let offlineStore = try ProjectStore(root: store.root.appendingPathComponent("disconnected-cli"))
         let offlineStudio = StudioModel(engine: try NativeEngine(store: offlineStore, inference: DisconnectedInference()))
         await offlineStudio.refreshModels()

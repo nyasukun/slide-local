@@ -20,4 +20,4 @@ if [[ "${1:-}" != '--stage' ]]; then
     /usr/bin/codesign --force --deep --sign - 'Slide Local.app'
     /usr/bin/codesign --verify --deep --strict 'Slide Local.app'
 fi
-print 'Slide Local 2.0.2 をビルドしました。'
+print 'Slide Local 2.0.5 をビルドしました。'

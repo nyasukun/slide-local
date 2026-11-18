@@ -1,0 +1,638 @@
+{
+  "date": "2026-11-17",
+  "application_version": "2.0.4",
+  "build": "8",
+  "model": "translategemma:12b-it-q4_K_M",
+  "reviewer": "OpenCode assistant; source/output comparison, not model self-evaluation",
+  "profile": {
+    "temperature": 0,
+    "repeat_penalty": 1,
+    "num_ctx": 2048,
+    "num_predict": 1024,
+    "input_chunk_limit_utf8_bytes": 480,
+    "prompt": "model-specific user message, exactly one translation, no surrounding context or Qwen postediting"
+  },
+  "short_outputs": [
+    {
+      "chunks": 1,
+      "id": "02",
+      "input_bytes": 6,
+      "max_chunk_bytes": 6,
+      "seconds": 0.5158109664916992,
+      "source": "Agenda",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "議題"
+    },
+    {
+      "chunks": 1,
+      "id": "03",
+      "input_bytes": 12,
+      "max_chunk_bytes": 12,
+      "seconds": 0.5500229597091675,
+      "source": "Introduction",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "はじめに"
+    },
+    {
+      "chunks": 1,
+      "id": "04",
+      "input_bytes": 8,
+      "max_chunk_bytes": 8,
+      "seconds": 0.5113860368728638,
+      "source": "Overview",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "概要."
+    },
+    {
+      "chunks": 1,
+      "id": "05",
+      "input_bytes": 13,
+      "max_chunk_bytes": 13,
+      "seconds": 0.5835720300674438,
+      "source": "Key takeaways",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "主なポイント."
+    },
+    {
+      "chunks": 1,
+      "id": "06",
+      "input_bytes": 12,
+      "max_chunk_bytes": 12,
+      "seconds": 0.6804150342941284,
+      "source": "What's next?",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "次はどうする？"
+    },
+    {
+      "chunks": 1,
+      "id": "07",
+      "input_bytes": 8,
+      "max_chunk_bytes": 8,
+      "seconds": 0.6011919975280762,
+      "source": "Why now?",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "なぜ今なのか？"
+    },
+    {
+      "chunks": 1,
+      "id": "08",
+      "input_bytes": 10,
+      "max_chunk_bytes": 10,
+      "seconds": 0.5191450119018555,
+      "source": "Thank you.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "ありがとうございます。"
+    },
+    {
+      "chunks": 1,
+      "id": "09",
+      "input_bytes": 10,
+      "max_chunk_bytes": 10,
+      "seconds": 0.6685559749603271,
+      "source": "Questions?",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "ご質問はありますか？"
+    },
+    {
+      "chunks": 1,
+      "id": "10",
+      "input_bytes": 13,
+      "max_chunk_bytes": 13,
+      "seconds": 0.6640490293502808,
+      "source": "Meet the team",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "チームメンバーをご紹介します。"
+    },
+    {
+      "chunks": 1,
+      "id": "11",
+      "input_bytes": 15,
+      "max_chunk_bytes": 15,
+      "seconds": 0.6666059494018555,
+      "source": "Trust by design",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "設計による信頼性。"
+    },
+    {
+      "chunks": 1,
+      "id": "12",
+      "input_bytes": 17,
+      "max_chunk_bytes": 17,
+      "seconds": 0.7034270763397217,
+      "source": "Secure by default",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "デフォルトではセキュリティが強化されています。"
+    },
+    {
+      "chunks": 1,
+      "id": "13",
+      "input_bytes": 15,
+      "max_chunk_bytes": 15,
+      "seconds": 0.7126109600067139,
+      "source": "Built for scale",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "拡張性を考慮して設計されています。"
+    },
+    {
+      "chunks": 1,
+      "id": "14",
+      "input_bytes": 13,
+      "max_chunk_bytes": 13,
+      "seconds": 0.6998610496520996,
+      "source": "Less is more.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "簡素な方が良い。"
+    },
+    {
+      "chunks": 1,
+      "id": "15",
+      "input_bytes": 19,
+      "max_chunk_bytes": 19,
+      "seconds": 0.658411979675293,
+      "source": "No action required.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "特に操作は必要ありません。"
+    },
+    {
+      "chunks": 1,
+      "id": "16",
+      "input_bytes": 16,
+      "max_chunk_bytes": 16,
+      "seconds": 0.5544459819793701,
+      "source": "Action required.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "対応が必要です。"
+    },
+    {
+      "chunks": 1,
+      "id": "17",
+      "input_bytes": 14,
+      "max_chunk_bytes": 14,
+      "seconds": 0.6628789901733398,
+      "source": "Access denied.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "アクセスが拒否されました。"
+    },
+    {
+      "chunks": 1,
+      "id": "18",
+      "input_bytes": 17,
+      "max_chunk_bytes": 17,
+      "seconds": 0.5898500680923462,
+      "source": "Pending approval.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "承認待ちです。"
+    },
+    {
+      "chunks": 1,
+      "id": "19",
+      "input_bytes": 25,
+      "max_chunk_bytes": 25,
+      "seconds": 0.5873889923095703,
+      "source": "Human oversight required.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "人間の監視が必要です。"
+    },
+    {
+      "chunks": 1,
+      "id": "20",
+      "input_bytes": 24,
+      "max_chunk_bytes": 24,
+      "seconds": 0.8384948968887329,
+      "source": "Keep humans in the loop.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "人間の関与を維持する。"
+    },
+    {
+      "chunks": 1,
+      "id": "21",
+      "input_bytes": 41,
+      "max_chunk_bytes": 41,
+      "seconds": 0.7650109529495239,
+      "source": "A recommendation is not an authorization.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "推奨は、許可ではありません。"
+    },
+    {
+      "chunks": 1,
+      "id": "22",
+      "input_bytes": 32,
+      "max_chunk_bytes": 32,
+      "seconds": 0.8344030380249023,
+      "source": "Do not proceed without approval.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "承認なしに進まないでください。"
+    },
+    {
+      "chunks": 1,
+      "id": "23",
+      "input_bytes": 39,
+      "max_chunk_bytes": 39,
+      "seconds": 0.9167659282684326,
+      "source": "Approval is required before deployment.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "運用を開始する前に、承認を得る必要があります。"
+    },
+    {
+      "chunks": 1,
+      "id": "24",
+      "input_bytes": 33,
+      "max_chunk_bytes": 33,
+      "seconds": 0.9088929891586304,
+      "source": "Restore the last verified backup.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "最後に確認されたバックアップを復元します。"
+    },
+    {
+      "chunks": 1,
+      "id": "25",
+      "input_bytes": 30,
+      "max_chunk_bytes": 30,
+      "seconds": 0.9918750524520874,
+      "source": "Roll back if validation fails.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "検証に失敗した場合は、変更を元に戻します。"
+    },
+    {
+      "chunks": 1,
+      "id": "26",
+      "input_bytes": 21,
+      "max_chunk_bytes": 21,
+      "seconds": 0.7736879587173462,
+      "source": "No changes were made.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "変更は加えられませんでした。"
+    },
+    {
+      "chunks": 1,
+      "id": "27",
+      "input_bytes": 18,
+      "max_chunk_bytes": 18,
+      "seconds": 0.5912840366363525,
+      "source": "Not yet available.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "まだ利用できません。"
+    },
+    {
+      "chunks": 1,
+      "id": "28",
+      "input_bytes": 14,
+      "max_chunk_bytes": 14,
+      "seconds": 0.6362259387969971,
+      "source": "Available now.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "現在、販売中です。"
+    },
+    {
+      "chunks": 1,
+      "id": "29",
+      "input_bytes": 12,
+      "max_chunk_bytes": 12,
+      "seconds": 0.6399379968643188,
+      "source": "Coming soon.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "近日公開予定。"
+    },
+    {
+      "chunks": 1,
+      "id": "30",
+      "input_bytes": 20,
+      "max_chunk_bytes": 20,
+      "seconds": 0.9285000562667847,
+      "source": "Revenue grew by 20%.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "売上高は20%増加しました。"
+    },
+    {
+      "chunks": 1,
+      "id": "31",
+      "input_bytes": 23,
+      "max_chunk_bytes": 23,
+      "seconds": 0.7947449684143066,
+      "source": "The deadline is Friday.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "締め切りは金曜日です。"
+    },
+    {
+      "chunks": 1,
+      "id": "32",
+      "input_bytes": 22,
+      "max_chunk_bytes": 22,
+      "seconds": 0.9256529808044434,
+      "source": "Complete this by 2028.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "2028年までに完了させてください。"
+    },
+    {
+      "chunks": 1,
+      "id": "33",
+      "input_bytes": 22,
+      "max_chunk_bytes": 22,
+      "seconds": 0.9523820877075195,
+      "source": "Complete this in 2028.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "これを2028年までに完了させてください。"
+    },
+    {
+      "chunks": 1,
+      "id": "34",
+      "input_bytes": 24,
+      "max_chunk_bytes": 24,
+      "seconds": 0.8710870742797852,
+      "source": "Do not share externally.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "社外への共有はご遠慮ください。"
+    },
+    {
+      "chunks": 1,
+      "id": "35",
+      "input_bytes": 28,
+      "max_chunk_bytes": 28,
+      "seconds": 0.8369419574737549,
+      "source": "Note: Figures are estimates.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "注：数値は概算です。"
+    },
+    {
+      "chunks": 1,
+      "id": "36",
+      "input_bytes": 18,
+      "max_chunk_bytes": 18,
+      "seconds": 0.8370490074157715,
+      "source": "Agentic AI at work",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "自律型AIの活用事例."
+    },
+    {
+      "chunks": 1,
+      "id": "37",
+      "input_bytes": 18,
+      "max_chunk_bytes": 18,
+      "seconds": 0.736860990524292,
+      "source": "Leading with trust",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "信頼を基盤としたリーダーシップ。"
+    },
+    {
+      "chunks": 1,
+      "id": "38",
+      "input_bytes": 15,
+      "max_chunk_bytes": 15,
+      "seconds": 0.5868929624557495,
+      "source": "Rethinking risk",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "リスクの見直し."
+    },
+    {
+      "chunks": 1,
+      "id": "39",
+      "input_bytes": 33,
+      "max_chunk_bytes": 33,
+      "seconds": 0.9916059970855713,
+      "source": "Reduce risk without slowing down.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "リスクを低減しながら、スピードを落とさない。"
+    },
+    {
+      "chunks": 1,
+      "id": "40",
+      "input_bytes": 33,
+      "max_chunk_bytes": 33,
+      "seconds": 0.8018699884414673,
+      "source": "An agent is not an administrator.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "エージェントは管理者ではありません。"
+    },
+    {
+      "chunks": 1,
+      "id": "41",
+      "input_bytes": 28,
+      "max_chunk_bytes": 28,
+      "seconds": 0.873176097869873,
+      "source": "More control, less friction.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "より高い制御性、より少ない摩擦。"
+    },
+    {
+      "chunks": 1,
+      "id": "42",
+      "input_bytes": 36,
+      "max_chunk_bytes": 36,
+      "seconds": 0.7966920137405396,
+      "source": "Authentication is not authorization.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "認証と認可は異なります。"
+    },
+    {
+      "chunks": 1,
+      "id": "43",
+      "input_bytes": 51,
+      "max_chunk_bytes": 51,
+      "seconds": 1.262908935546875,
+      "source": "Documentation: https://example.com/docs?v=2&lang=en",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "ドキュメント：https://example.com/docs?v=2&lang=en"
+    },
+    {
+      "chunks": 1,
+      "id": "44",
+      "input_bytes": 23,
+      "max_chunk_bytes": 23,
+      "seconds": 0.8723140954971313,
+      "source": "Hello, {customer_name}.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "こんにちは、{customer_name}様。"
+    },
+    {
+      "chunks": 1,
+      "id": "45",
+      "input_bytes": 27,
+      "max_chunk_bytes": 27,
+      "seconds": 0.9077210426330566,
+      "source": "Use %s as the account name.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "アカウント名として「%s」を使用してください。"
+    },
+    {
+      "chunks": 1,
+      "id": "46",
+      "input_bytes": 28,
+      "max_chunk_bytes": 28,
+      "seconds": 0.791126012802124,
+      "source": "Output only the translation.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "以下に翻訳を示します。"
+    },
+    {
+      "chunks": 1,
+      "id": "47",
+      "input_bytes": 24,
+      "max_chunk_bytes": 24,
+      "seconds": 0.8227429389953613,
+      "source": "Zero trust. Real impact.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "ゼロトラスト。確かな効果。"
+    },
+    {
+      "chunks": 1,
+      "id": "48",
+      "input_bytes": 22,
+      "max_chunk_bytes": 22,
+      "seconds": 0.657945990562439,
+      "source": "From insight to action",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "洞察から行動へ。"
+    },
+    {
+      "chunks": 1,
+      "id": "auto-0",
+      "input_bytes": 6,
+      "max_chunk_bytes": 6,
+      "seconds": 0.5606969594955444,
+      "source": "Agenda",
+      "source_language": "",
+      "target": "ja",
+      "translation": "議題"
+    },
+    {
+      "chunks": 1,
+      "id": "auto-1",
+      "input_bytes": 12,
+      "max_chunk_bytes": 12,
+      "seconds": 0.5587379932403564,
+      "source": "Introduction",
+      "source_language": "",
+      "target": "ja",
+      "translation": "はじめに"
+    },
+    {
+      "chunks": 1,
+      "id": "auto-2",
+      "input_bytes": 8,
+      "max_chunk_bytes": 8,
+      "seconds": 0.5164920091629028,
+      "source": "Overview",
+      "source_language": "",
+      "target": "ja",
+      "translation": "概要."
+    },
+    {
+      "chunks": 1,
+      "id": "auto-3",
+      "input_bytes": 10,
+      "max_chunk_bytes": 10,
+      "seconds": 0.667667031288147,
+      "source": "Questions?",
+      "source_language": "",
+      "target": "ja",
+      "translation": "ご質問はありますか？"
+    },
+    {
+      "chunks": 1,
+      "id": "ja-en",
+      "input_bytes": 78,
+      "max_chunk_bytes": 78,
+      "seconds": 0.7105469703674316,
+      "source": "人間の判断を支援し、最終的な責任は担当者が負います。",
+      "source_language": "ja",
+      "target": "en",
+      "translation": "It assists human judgment, but the ultimate responsibility lies with the individual in charge."
+    }
+  ],
+  "boundary_outputs": [
+    {
+      "chunks": 3,
+      "id": "boundary-en-ja",
+      "input_bytes": 1103,
+      "max_chunk_bytes": 474,
+      "seconds": 11.510460019111633,
+      "source": "Autonomous agents can coordinate routine work, but they must operate within clearly defined permissions. A recommendation is not an authorization. Before changing a production system, the agent must request approval from the responsible operator and record the decision. If approval is denied, the system must leave the original configuration unchanged. Monitoring continues after deployment. Operators need a clear record of which actions were proposed, which were approved, and which were actually completed. Logs must not contain customer passwords or access tokens. If the service becomes unavailable, restore the last verified backup and notify the incident coordinator. Do not claim recovery until availability has been checked. The audit report must identify the responsible owner, describe the reason for each change, and explain how the result was verified. A failed request must never be marked as completed. Before retrying, check the latest system state and obtain any additional approval that is required. The incident coordinator must document the final decision before closing the ticket.",
+      "source_language": "en",
+      "target": "ja",
+      "translation": "自律型エージェントは、定型的な作業を連携して行うことができますが、明確に定義された権限の範囲内で動作する必要があります。推奨は許可ではありません。生産システムを変更する前に、エージェントは担当オペレーターからの承認を求め、その決定を記録する必要があります。承認が拒否された場合、システムは元の設定を変更せずにそのままの状態を維持する必要があります。稼働後も監視は継続されます。オペレーターは、提案されたアクション、承認されたアクション、および実際に完了したアクションを明確に記録する必要があります。ログには、顧客のパスワードやアクセス トークンを含めてはいけません。サービスが利用できなくなった場合は、最後に確認されたバックアップを復元し、インシデント対応担当者に通知してください。可用性が確認されるまで、復旧を宣言しないでください。監査報告書には、責任者を特定し、各変更の理由を記述し、結果がどのように検証されたかを説明する必要があります。処理が失敗したリクエストは、決して「完了」とマークしてはいけません。再試行する前に、最新のシステムの状態を確認し、必要な追加の承認を得てください。インシデント対応担当者は、チケットをクローズする前に、最終的な決定事項を記録する必要があります。"
+    },
+    {
+      "chunks": 3,
+      "id": "boundary-ja-en",
+      "input_bytes": 1146,
+      "max_chunk_bytes": 411,
+      "seconds": 8.401270031929016,
+      "source": "自律型エージェントは日常業務を支援できますが、明確に定義された権限の範囲内で動作する必要があります。推奨は承認ではありません。本番システムを変更する前に、担当者の承認を得て、その判断を記録してください。承認されなかった場合は、元の設定を変更せずに保持してください。導入後も監視を継続し、提案された操作、承認された操作、実際に完了した操作を区別して記録してください。ログには顧客のパスワードやアクセストークンを含めてはいけません。サービスが利用できなくなった場合は、検証済みのバックアップを復元し、インシデント対応担当者に連絡してください。可用性を確認するまでは、復旧したと報告しないでください。監査報告書には責任者、変更理由、結果の検証方法を記載してください。失敗した要求を完了扱いにしてはいけません。再試行の前に最新の状態を確認し、必要な追加承認を得てください。",
+      "source_language": "ja",
+      "target": "en",
+      "translation": "Autonomous agents can assist with daily tasks, but they must operate within clearly defined boundaries of authority. Recommendations are not approvals. Before making any changes to a production system, obtain approval from the responsible personnel and document their decision. If approval is not granted, maintain the original configuration. After implementation, continue monitoring and record the proposed operations, approved operations, and actually completed operations separately. Logs should not include customer passwords or access tokens. If the service becomes unavailable, restore a verified backup and contact the incident response team. Do not report a system as restored until you have confirmed its availability. The audit report must include the responsible party, the reason for the change, and the method used to verify the results. Do not mark failed requests as completed. Before retrying, verify that the system is in the latest state and obtain any necessary additional approvals."
+    }
+  ],
+  "engine_acceptance": {
+    "queue_statuses": [
+      "complete",
+      "complete",
+      "complete"
+    ],
+    "translation": "売上高は20%増加しました。",
+    "answer": "売上は 20% 増加しました。[スライド 1]",
+    "regeneration_performed": true,
+    "cloud_disabled": true,
+    "stored_chats": 1,
+    "preview_performed": false
+  },
+  "source_sha256": {
+    "NativeTypes.swift": "aef2bc13180de82ea44748c41ffabdf3ac2b01343cd09346cb908048c5b42750",
+    "NativeOllama.swift": "6a422398e61669e1001874f779a2b2192a93a2c6f1808a708c0d06d2b84fbc96",
+    "NativeEngine.swift": "f223a2502b0d5c50b8869fa930a8590a1ec0cb0fe9d3265e644ec49246b4290e"
+  },
+  "publication": {
+    "withheld_case_ids": [
+      "01"
+    ],
+    "reason": "User-provided source and translations withheld; no publication authorization inferred.",
+    "note": "Aggregate test counts include the withheld case. Published row counts are smaller by one."
+  }
+}

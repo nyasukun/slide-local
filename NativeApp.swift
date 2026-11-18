@@ -11,6 +11,7 @@ struct TranslationRequest: Identifiable {
     let ids: [String]
     let options: QueueOptions
     let assessments: [TranslationAssessment]
+    var regenerate = false
 }
 struct ChatDeletionRequest: Identifiable {
     let id = UUID()
@@ -29,9 +30,9 @@ struct ChatDeletionRequest: Identifiable {
     @Published var error: String?
     @Published var notice = ""
     @Published var slide = 1
-    @Published var source = ""
+    @Published var source = "en"
     @Published var target = "ja"
-    @Published var translationModel = "plamo-translate:0.8b"
+    @Published var translationModel = LocalModel.defaultTranslation
     @Published var chatModel = "qwen3.5:4b"
     @Published var notes = false
     @Published var fit = true
@@ -71,6 +72,7 @@ struct ChatDeletionRequest: Identifiable {
         if controlsLocked { return "現在の操作が終わるまでお待ちください。" }
         if !connected { return "Ollamaに接続できません。「接続・モデルを確認」から再確認してください。" }
         if !models.contains(where: { $0.name == translationModel }) { return "選択した翻訳モデルがこのMacにありません。詳細設定でモデルを選び直してください。" }
+        if let error = LocalModel.translationLanguageError(model: translationModel, source: source, target: target) { return error }
         return nil
     }
     var completedQueueItems: [QueueItem] {
@@ -100,7 +102,8 @@ struct ChatDeletionRequest: Identifiable {
     }
     var translating: Bool { ["translating", "queued"].contains(project?.state ?? "") }
     var pendingBatchIDs: [String] { batchIDs.filter { id in !queueItems.contains { $0.project_id == id && ["queued", "running"].contains($0.status) } } }
-    var chatModels: [LocalModel] { models.filter { !$0.name.lowercased().contains("plamo") } }
+    var chatModels: [LocalModel] { models.filter { !LocalModel.isTranslationOnly($0.name) } }
+    var translationLanguages: [(String, String)] { LocalModel.isCATTranslation(translationModel) ? languages.filter { ["ja", "en"].contains($0.0) } : languages }
     var visibleUnits: [TextUnit] {
         guard let p = project, let s = p.slides.first(where: { $0.number == slide }) else { return [] }
         let ids = Set(s.units)
@@ -280,16 +283,20 @@ struct ChatDeletionRequest: Identifiable {
         guard let id = project?.id else { return }
         requestTranslation(ids: [id], options: currentOptions)
     }
-    func requestTranslation(ids: [String], options: QueueOptions) {
+    func regenerateTranslation() {
+        guard let id = project?.id else { return }
+        requestTranslation(ids: [id], options: currentOptions, regenerate: true)
+    }
+    func requestTranslation(ids: [String], options: QueueOptions, regenerate: Bool = false) {
         guard !controlsLocked, !ids.isEmpty else { return }
         let selectedID = project?.id, changes = drafts
         actionBusy = true; enqueueing = true
         Task {
             do {
                 if let selectedID, ids.contains(selectedID) { try await saveDrafts(projectID: selectedID, changes: changes) }
-                let assessments = try await service().assessTranslation(ids, options: options)
-                let request = TranslationRequest(ids: ids, options: options, assessments: assessments)
-                if assessments.contains(where: \.resetsTranslations) { pendingTranslation = request }
+                let assessments = try await service().assessTranslation(ids, options: options, regenerate: regenerate)
+                let request = TranslationRequest(ids: ids, options: options, assessments: assessments, regenerate: regenerate)
+                if regenerate || assessments.contains(where: \.resetsTranslations) { pendingTranslation = request }
                 else { await submitTranslation(request, allowReset: false) }
             } catch { self.error = error.localizedDescription; actionBusy = false; enqueueing = false }
         }
@@ -307,7 +314,7 @@ struct ChatDeletionRequest: Identifiable {
     private func submitTranslation(_ request: TranslationRequest, allowReset: Bool) async {
         defer { actionBusy = false; enqueueing = false }
         do {
-            try await service().enqueue(request.ids, options: request.options, assessments: request.assessments, allowReset: allowReset)
+            try await service().enqueue(request.ids, options: request.options, assessments: request.assessments, allowReset: allowReset, regenerate: request.regenerate)
             batchIDs.removeAll { request.ids.contains($0) }
             await refreshCurrent(); await refreshQueue()
             notice = "\(request.ids.count)件の翻訳を予約しました。" + (queuePaused ? " 一時停止中です。再開すると順番に翻訳します。" : " 追加順に1件ずつ翻訳します。")
@@ -323,7 +330,7 @@ struct ChatDeletionRequest: Identifiable {
         Task { defer { actionBusy = false }; do { try await service().setPaused(paused); await refreshQueue() } catch { self.error = error.localizedDescription } }
     }
     func cancelQueue(_ item: QueueItem) { Task { do { try await service().cancel(item.id); await refreshQueue(); await refreshCurrent() } catch { self.error = error.localizedDescription } } }
-    func retryQueue(_ item: QueueItem) { requestTranslation(ids: [item.project_id], options: item.options) }
+    func retryQueue(_ item: QueueItem) { requestTranslation(ids: [item.project_id], options: item.options, regenerate: item.regenerate == true) }
     func exportCompletedQueue() {
         guard !controlsLocked else { return }
         let items = queueItems.filter { item in item.status == "complete" && queueItems.last(where: { $0.project_id == item.project_id })?.id == item.id }

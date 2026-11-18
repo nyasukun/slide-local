@@ -1,0 +1,1907 @@
+{
+  "date": "2026-11-17",
+  "scope": "48 independent short-English inputs translated to Japanese; baseline outputs preserved without cleanup.",
+  "reviewer": "OpenCode assistant; source/output comparison, not model self-evaluation.",
+  "cases": [
+    {
+      "id": "02",
+      "group": "heading",
+      "source": "Agenda",
+      "focus": "会議・資料の見出しとして自然"
+    },
+    {
+      "id": "03",
+      "group": "heading",
+      "source": "Introduction",
+      "focus": "短い見出しだけを訳す"
+    },
+    {
+      "id": "04",
+      "group": "heading",
+      "source": "Overview",
+      "focus": "概要"
+    },
+    {
+      "id": "05",
+      "group": "heading",
+      "source": "Key takeaways",
+      "focus": "要点・重要なポイント"
+    },
+    {
+      "id": "06",
+      "group": "heading",
+      "source": "What's next?",
+      "focus": "今後の展開"
+    },
+    {
+      "id": "07",
+      "group": "heading",
+      "source": "Why now?",
+      "focus": "なぜ今なのか"
+    },
+    {
+      "id": "08",
+      "group": "heading",
+      "source": "Thank you.",
+      "focus": "謝意。別の内容を追加しない"
+    },
+    {
+      "id": "09",
+      "group": "heading",
+      "source": "Questions?",
+      "focus": "質問を受け付ける見出し"
+    },
+    {
+      "id": "10",
+      "group": "heading",
+      "source": "Meet the team",
+      "focus": "チーム紹介。文脈なしのため複数の自然な訳を許容"
+    },
+    {
+      "id": "11",
+      "group": "slogan",
+      "source": "Trust by design",
+      "focus": "設計段階から信頼を組み込む"
+    },
+    {
+      "id": "12",
+      "group": "slogan",
+      "source": "Secure by default",
+      "focus": "初期設定で安全"
+    },
+    {
+      "id": "13",
+      "group": "slogan",
+      "source": "Built for scale",
+      "focus": "拡張性・規模拡大への対応"
+    },
+    {
+      "id": "14",
+      "group": "slogan",
+      "source": "Less is more.",
+      "focus": "簡素さの価値。単なる量の比較にしない"
+    },
+    {
+      "id": "15",
+      "group": "status",
+      "source": "No action required.",
+      "focus": "対応不要。否定を保持"
+    },
+    {
+      "id": "16",
+      "group": "status",
+      "source": "Action required.",
+      "focus": "対応必要"
+    },
+    {
+      "id": "17",
+      "group": "status",
+      "source": "Access denied.",
+      "focus": "アクセス拒否"
+    },
+    {
+      "id": "18",
+      "group": "status",
+      "source": "Pending approval.",
+      "focus": "承認待ち。承認済みと混同しない"
+    },
+    {
+      "id": "19",
+      "group": "constraint",
+      "source": "Human oversight required.",
+      "focus": "人間による監督・監視が必要"
+    },
+    {
+      "id": "20",
+      "group": "constraint",
+      "source": "Keep humans in the loop.",
+      "focus": "人間の関与を維持。直訳だけにしない"
+    },
+    {
+      "id": "21",
+      "group": "constraint",
+      "source": "A recommendation is not an authorization.",
+      "focus": "推奨と承認・権限付与を区別"
+    },
+    {
+      "id": "22",
+      "group": "constraint",
+      "source": "Do not proceed without approval.",
+      "focus": "承認なしに進めない"
+    },
+    {
+      "id": "23",
+      "group": "constraint",
+      "source": "Approval is required before deployment.",
+      "focus": "デプロイ前の承認"
+    },
+    {
+      "id": "24",
+      "group": "instruction",
+      "source": "Restore the last verified backup.",
+      "focus": "最後に検証済みのバックアップを復元"
+    },
+    {
+      "id": "25",
+      "group": "instruction",
+      "source": "Roll back if validation fails.",
+      "focus": "検証失敗時にロールバック"
+    },
+    {
+      "id": "26",
+      "group": "status",
+      "source": "No changes were made.",
+      "focus": "変更なし。否定を保持"
+    },
+    {
+      "id": "27",
+      "group": "status",
+      "source": "Not yet available.",
+      "focus": "まだ利用できない"
+    },
+    {
+      "id": "28",
+      "group": "status",
+      "source": "Available now.",
+      "focus": "現在利用可能"
+    },
+    {
+      "id": "29",
+      "group": "status",
+      "source": "Coming soon.",
+      "focus": "近日公開・近日提供"
+    },
+    {
+      "id": "30",
+      "group": "numbers",
+      "source": "Revenue grew by 20%.",
+      "focus": "売上/収益増20%、増減を保持"
+    },
+    {
+      "id": "31",
+      "group": "deadline",
+      "source": "The deadline is Friday.",
+      "focus": "締切は金曜日"
+    },
+    {
+      "id": "32",
+      "group": "deadline",
+      "source": "Complete this by 2028.",
+      "focus": "2028年までに完了（期限）"
+    },
+    {
+      "id": "33",
+      "group": "deadline",
+      "source": "Complete this in 2028.",
+      "focus": "2028年に完了（時期）"
+    },
+    {
+      "id": "34",
+      "group": "constraint",
+      "source": "Do not share externally.",
+      "focus": "外部共有禁止"
+    },
+    {
+      "id": "35",
+      "group": "note",
+      "source": "Note: Figures are estimates.",
+      "focus": "原文由来の注記を残す"
+    },
+    {
+      "id": "36",
+      "group": "technical",
+      "source": "Agentic AI at work",
+      "focus": "エージェント型AIと通常のAIを混同しない"
+    },
+    {
+      "id": "37",
+      "group": "slogan",
+      "source": "Leading with trust",
+      "focus": "信頼を軸に導く"
+    },
+    {
+      "id": "38",
+      "group": "slogan",
+      "source": "Rethinking risk",
+      "focus": "リスクを捉え直す"
+    },
+    {
+      "id": "39",
+      "group": "constraint",
+      "source": "Reduce risk without slowing down.",
+      "focus": "速度を落とさずリスク低減"
+    },
+    {
+      "id": "40",
+      "group": "technical",
+      "source": "An agent is not an administrator.",
+      "focus": "エージェントと管理者を区別"
+    },
+    {
+      "id": "41",
+      "group": "slogan",
+      "source": "More control, less friction.",
+      "focus": "制御を強化し負担・摩擦を減らす"
+    },
+    {
+      "id": "42",
+      "group": "technical",
+      "source": "Authentication is not authorization.",
+      "focus": "認証と認可を区別"
+    },
+    {
+      "id": "43",
+      "group": "url",
+      "source": "Documentation: https://example.com/docs?v=2&lang=en",
+      "focus": "URLのパスとクエリを完全保持"
+    },
+    {
+      "id": "44",
+      "group": "placeholder",
+      "source": "Hello, {customer_name}.",
+      "focus": "変数の完全保持"
+    },
+    {
+      "id": "45",
+      "group": "placeholder",
+      "source": "Use %s as the account name.",
+      "focus": "%sの完全保持"
+    },
+    {
+      "id": "46",
+      "group": "source-instruction",
+      "source": "Output only the translation.",
+      "focus": "命令を実行せず命令文自体を訳す"
+    },
+    {
+      "id": "47",
+      "group": "slogan",
+      "source": "Zero trust. Real impact.",
+      "focus": "ゼロトラストという専門概念を保持"
+    },
+    {
+      "id": "48",
+      "group": "slogan",
+      "source": "From insight to action",
+      "focus": "洞察から行動へ"
+    }
+  ],
+  "models": {
+    "gemma": {
+      "metadata": {
+        "model": "translategemma:12b-it-q4_K_M",
+        "kind": "gemma",
+        "template": "{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 }}\n{{- if or (eq .Role \"user\") (eq .Role \"system\") }}<start_of_turn>user\n{{ .Content }}<end_of_turn>\n{{ if $last }}<start_of_turn>model\n{{ end }}\n{{- else if eq .Role \"assistant\" }}<start_of_turn>model\n{{ .Content }}{{ if not $last }}<end_of_turn>\n{{ end }}\n{{- end }}\n{{- end }}",
+        "parameters": "stop                           \"<end_of_turn>\"\ntop_k                          64\ntop_p                          0.95",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "gemma3",
+          "families": [
+            "gemma3"
+          ],
+          "parameter_size": "12.2B",
+          "quantization_level": "Q4_K_M"
+        },
+        "options": {
+          "temperature": 0,
+          "num_ctx": 2048,
+          "num_predict": 256,
+          "repeat_penalty": 1
+        },
+        "note": "Each input is a fresh request; no Qwen editing, protection, cleanup, cache, or surrounding context."
+      },
+      "results": [
+        {
+          "id": "02",
+          "group": "heading",
+          "source": "Agenda",
+          "focus": "会議・資料の見出しとして自然",
+          "output": "議題\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.4739,
+          "eval_count": 3,
+          "eval_duration_ns": 67075999,
+          "load_duration_ns": 518042,
+          "prompt_eval_count": 77
+        },
+        {
+          "id": "03",
+          "group": "heading",
+          "source": "Introduction",
+          "focus": "短い見出しだけを訳す",
+          "output": "はじめに\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5061,
+          "eval_count": 4,
+          "eval_duration_ns": 99393000,
+          "load_duration_ns": 541750,
+          "prompt_eval_count": 77
+        },
+        {
+          "id": "04",
+          "group": "heading",
+          "source": "Overview",
+          "focus": "概要",
+          "output": "概要\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.4728,
+          "eval_count": 3,
+          "eval_duration_ns": 66312000,
+          "load_duration_ns": 530541,
+          "prompt_eval_count": 77
+        },
+        {
+          "id": "05",
+          "group": "heading",
+          "source": "Key takeaways",
+          "focus": "要点・重要なポイント",
+          "output": "主なポイント：\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5401,
+          "eval_count": 5,
+          "eval_duration_ns": 132987000,
+          "load_duration_ns": 597125,
+          "prompt_eval_count": 78
+        },
+        {
+          "id": "06",
+          "group": "heading",
+          "source": "What's next?",
+          "focus": "今後の展開",
+          "output": "次に何が？\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5692,
+          "eval_count": 6,
+          "eval_duration_ns": 163711000,
+          "load_duration_ns": 513584,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "07",
+          "group": "heading",
+          "source": "Why now?",
+          "focus": "なぜ今なのか",
+          "output": "なぜ今なのか？",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5367,
+          "eval_count": 5,
+          "eval_duration_ns": 131100000,
+          "load_duration_ns": 475459,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "08",
+          "group": "heading",
+          "source": "Thank you.",
+          "focus": "謝意。別の内容を追加しない",
+          "output": "ありがとうございます。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.4723,
+          "eval_count": 3,
+          "eval_duration_ns": 65968000,
+          "load_duration_ns": 507083,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "09",
+          "group": "heading",
+          "source": "Questions?",
+          "focus": "質問を受け付ける見出し",
+          "output": "ご質問はありますか？\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6383,
+          "eval_count": 8,
+          "eval_duration_ns": 229997000,
+          "load_duration_ns": 562458,
+          "prompt_eval_count": 78
+        },
+        {
+          "id": "10",
+          "group": "heading",
+          "source": "Meet the team",
+          "focus": "チーム紹介。文脈なしのため複数の自然な訳を許容",
+          "output": "チームメンバーをご紹介します。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6058,
+          "eval_count": 7,
+          "eval_duration_ns": 198749000,
+          "load_duration_ns": 519083,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "11",
+          "group": "slogan",
+          "source": "Trust by design",
+          "focus": "設計段階から信頼を組み込む",
+          "output": "設計による信頼性。\nまたは\n設計段階からの信頼性確保。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.8987,
+          "eval_count": 16,
+          "eval_duration_ns": 491637000,
+          "load_duration_ns": 537416,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "12",
+          "group": "slogan",
+          "source": "Secure by default",
+          "focus": "初期設定で安全",
+          "output": "デフォルトではセキュリティが強化されています。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6692,
+          "eval_count": 9,
+          "eval_duration_ns": 262163000,
+          "load_duration_ns": 511958,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "13",
+          "group": "slogan",
+          "source": "Built for scale",
+          "focus": "拡張性・規模拡大への対応",
+          "output": "拡張性を考慮して設計されています。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6689,
+          "eval_count": 9,
+          "eval_duration_ns": 261545000,
+          "load_duration_ns": 640875,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "14",
+          "group": "slogan",
+          "source": "Less is more.",
+          "focus": "簡素さの価値。単なる量の比較にしない",
+          "output": "簡素な方が良い。\nまたは\n質素こそが良し。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.9694,
+          "eval_count": 18,
+          "eval_duration_ns": 561130000,
+          "load_duration_ns": 479917,
+          "prompt_eval_count": 80
+        },
+        {
+          "id": "15",
+          "group": "status",
+          "source": "No action required.",
+          "focus": "対応不要。否定を保持",
+          "output": "特に操作は必要ありません。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.638,
+          "eval_count": 8,
+          "eval_duration_ns": 229319000,
+          "load_duration_ns": 645500,
+          "prompt_eval_count": 80
+        },
+        {
+          "id": "16",
+          "group": "status",
+          "source": "Action required.",
+          "focus": "対応必要",
+          "output": "対応が必要です。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5397,
+          "eval_count": 5,
+          "eval_duration_ns": 132005000,
+          "load_duration_ns": 582792,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "17",
+          "group": "status",
+          "source": "Access denied.",
+          "focus": "アクセス拒否",
+          "output": "アクセスが拒否されました。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6359,
+          "eval_count": 8,
+          "eval_duration_ns": 228716000,
+          "load_duration_ns": 639958,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "18",
+          "group": "status",
+          "source": "Pending approval.",
+          "focus": "承認待ち。承認済みと混同しない",
+          "output": "承認待ちです。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.572,
+          "eval_count": 6,
+          "eval_duration_ns": 165180000,
+          "load_duration_ns": 585375,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "19",
+          "group": "constraint",
+          "source": "Human oversight required.",
+          "focus": "人間による監督・監視が必要",
+          "output": "人間の監視が必要です。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5698,
+          "eval_count": 6,
+          "eval_duration_ns": 163585000,
+          "load_duration_ns": 524792,
+          "prompt_eval_count": 80
+        },
+        {
+          "id": "20",
+          "group": "constraint",
+          "source": "Keep humans in the loop.",
+          "focus": "人間の関与を維持。直訳だけにしない",
+          "output": "人間の関与を維持する。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6681,
+          "eval_count": 9,
+          "eval_duration_ns": 260699000,
+          "load_duration_ns": 552458,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "21",
+          "group": "constraint",
+          "source": "A recommendation is not an authorization.",
+          "focus": "推奨と承認・権限付与を区別",
+          "output": "推奨は、許可ではありません。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6033,
+          "eval_count": 7,
+          "eval_duration_ns": 195675000,
+          "load_duration_ns": 564834,
+          "prompt_eval_count": 83
+        },
+        {
+          "id": "22",
+          "group": "constraint",
+          "source": "Do not proceed without approval.",
+          "focus": "承認なしに進めない",
+          "output": "承認なしに進まないでください。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7011,
+          "eval_count": 10,
+          "eval_duration_ns": 293903000,
+          "load_duration_ns": 456000,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "23",
+          "group": "constraint",
+          "source": "Approval is required before deployment.",
+          "focus": "デプロイ前の承認",
+          "output": "運用を開始する前に、承認を得る必要があります。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7349,
+          "eval_count": 11,
+          "eval_duration_ns": 327564000,
+          "load_duration_ns": 521458,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "24",
+          "group": "instruction",
+          "source": "Restore the last verified backup.",
+          "focus": "最後に検証済みのバックアップを復元",
+          "output": "最後に確認されたバックアップを復元します。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7433,
+          "eval_count": 11,
+          "eval_duration_ns": 335082000,
+          "load_duration_ns": 652000,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "25",
+          "group": "instruction",
+          "source": "Roll back if validation fails.",
+          "focus": "検証失敗時にロールバック",
+          "output": "検証が失敗した場合、変更を元に戻します。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7664,
+          "eval_count": 12,
+          "eval_duration_ns": 359878000,
+          "load_duration_ns": 441916,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "26",
+          "group": "status",
+          "source": "No changes were made.",
+          "focus": "変更なし。否定を保持",
+          "output": "変更は一切加えられませんでした。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6355,
+          "eval_count": 8,
+          "eval_duration_ns": 228805000,
+          "load_duration_ns": 505708,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "27",
+          "group": "status",
+          "source": "Not yet available.",
+          "focus": "まだ利用できない",
+          "output": "まだ利用できません。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.5727,
+          "eval_count": 6,
+          "eval_duration_ns": 166191000,
+          "load_duration_ns": 486083,
+          "prompt_eval_count": 80
+        },
+        {
+          "id": "28",
+          "group": "status",
+          "source": "Available now.",
+          "focus": "現在利用可能",
+          "output": "現在、ご利用いただけます。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6022,
+          "eval_count": 7,
+          "eval_duration_ns": 196320000,
+          "load_duration_ns": 459500,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "29",
+          "group": "status",
+          "source": "Coming soon.",
+          "focus": "近日公開・近日提供",
+          "output": "近日公開予定。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.575,
+          "eval_count": 6,
+          "eval_duration_ns": 167863000,
+          "load_duration_ns": 483125,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "30",
+          "group": "numbers",
+          "source": "Revenue grew by 20%.",
+          "focus": "売上/収益増20%、増減を保持",
+          "output": "売上高は20%増加しました。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7396,
+          "eval_count": 11,
+          "eval_duration_ns": 333185000,
+          "load_duration_ns": 466708,
+          "prompt_eval_count": 83
+        },
+        {
+          "id": "31",
+          "group": "deadline",
+          "source": "The deadline is Friday.",
+          "focus": "締切は金曜日",
+          "output": "締め切りは金曜日です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6379,
+          "eval_count": 8,
+          "eval_duration_ns": 231698000,
+          "load_duration_ns": 462459,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "32",
+          "group": "deadline",
+          "source": "Complete this by 2028.",
+          "focus": "2028年までに完了（期限）",
+          "output": "2028年までに完了させてください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7338,
+          "eval_count": 11,
+          "eval_duration_ns": 326095000,
+          "load_duration_ns": 577875,
+          "prompt_eval_count": 85
+        },
+        {
+          "id": "33",
+          "group": "deadline",
+          "source": "Complete this in 2028.",
+          "focus": "2028年に完了（時期）",
+          "output": "これを2028年までに完了させてください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7663,
+          "eval_count": 12,
+          "eval_duration_ns": 359160000,
+          "load_duration_ns": 434958,
+          "prompt_eval_count": 85
+        },
+        {
+          "id": "34",
+          "group": "constraint",
+          "source": "Do not share externally.",
+          "focus": "外部共有禁止",
+          "output": "社外への共有はご遠慮ください。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7326,
+          "eval_count": 11,
+          "eval_duration_ns": 326281000,
+          "load_duration_ns": 459708,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "35",
+          "group": "note",
+          "source": "Note: Figures are estimates.",
+          "focus": "原文由来の注記を残す",
+          "output": "注：数値は概算です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6709,
+          "eval_count": 9,
+          "eval_duration_ns": 262500999,
+          "load_duration_ns": 745750,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "36",
+          "group": "technical",
+          "source": "Agentic AI at work",
+          "focus": "エージェント型AIと通常のAIを混同しない",
+          "output": "自律型AIの活用事例.",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6704,
+          "eval_count": 9,
+          "eval_duration_ns": 262338000,
+          "load_duration_ns": 721750,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "37",
+          "group": "slogan",
+          "source": "Leading with trust",
+          "focus": "信頼を軸に導く",
+          "output": "信頼を基盤としたリーダーシップ。\nまたは、信頼を重視したリーダーシップ。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 1.0033,
+          "eval_count": 19,
+          "eval_duration_ns": 596111000,
+          "load_duration_ns": 428083,
+          "prompt_eval_count": 79
+        },
+        {
+          "id": "38",
+          "group": "slogan",
+          "source": "Rethinking risk",
+          "focus": "リスクを捉え直す",
+          "output": "リスクの見直し.\nまたは\nリスクに対する考え方の見直し.\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.8985,
+          "eval_count": 16,
+          "eval_duration_ns": 491552000,
+          "load_duration_ns": 522333,
+          "prompt_eval_count": 80
+        },
+        {
+          "id": "39",
+          "group": "constraint",
+          "source": "Reduce risk without slowing down.",
+          "focus": "速度を落とさずリスク低減",
+          "output": "リスクを低減しながら、スピードを落とさない。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.8353,
+          "eval_count": 14,
+          "eval_duration_ns": 428437000,
+          "load_duration_ns": 722834,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "40",
+          "group": "technical",
+          "source": "An agent is not an administrator.",
+          "focus": "エージェントと管理者を区別",
+          "output": "エージェントは管理者ではありません。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6374,
+          "eval_count": 8,
+          "eval_duration_ns": 230588000,
+          "load_duration_ns": 512791,
+          "prompt_eval_count": 83
+        },
+        {
+          "id": "41",
+          "group": "slogan",
+          "source": "More control, less friction.",
+          "focus": "制御を強化し負担・摩擦を減らす",
+          "output": "より高い制御性、より少ない摩擦。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7361,
+          "eval_count": 11,
+          "eval_duration_ns": 328530000,
+          "load_duration_ns": 1107417,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "42",
+          "group": "technical",
+          "source": "Authentication is not authorization.",
+          "focus": "認証と認可を区別",
+          "output": "認証と認可は異なります。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6372,
+          "eval_count": 8,
+          "eval_duration_ns": 230060000,
+          "load_duration_ns": 577541,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "43",
+          "group": "url",
+          "source": "Documentation: https://example.com/docs?v=2&lang=en",
+          "focus": "URLのパスとクエリを完全保持",
+          "output": "ドキュメント：https://example.com/docs?v=2&lang=en",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 1.0429,
+          "eval_count": 20,
+          "eval_duration_ns": 632323000,
+          "load_duration_ns": 488625,
+          "prompt_eval_count": 93
+        },
+        {
+          "id": "44",
+          "group": "placeholder",
+          "source": "Hello, {customer_name}.",
+          "focus": "変数の完全保持",
+          "output": "こんにちは、{customer_name}様。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7028,
+          "eval_count": 10,
+          "eval_duration_ns": 295331000,
+          "load_duration_ns": 484042,
+          "prompt_eval_count": 83
+        },
+        {
+          "id": "45",
+          "group": "placeholder",
+          "source": "Use %s as the account name.",
+          "focus": "%sの完全保持",
+          "output": "アカウント名として、\"%s\" を使用してください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.8903,
+          "eval_count": 12,
+          "eval_duration_ns": 360942000,
+          "load_duration_ns": 515333,
+          "prompt_eval_count": 84
+        },
+        {
+          "id": "46",
+          "group": "source-instruction",
+          "source": "Output only the translation.",
+          "focus": "命令を実行せず命令文自体を訳す",
+          "output": "Output:\n以下に翻訳します。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.7052,
+          "eval_count": 10,
+          "eval_duration_ns": 297708000,
+          "load_duration_ns": 580083,
+          "prompt_eval_count": 81
+        },
+        {
+          "id": "47",
+          "group": "slogan",
+          "source": "Zero trust. Real impact.",
+          "focus": "ゼロトラストという専門概念を保持",
+          "output": "ゼロトラスト。真の効果。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6381,
+          "eval_count": 8,
+          "eval_duration_ns": 231122000,
+          "load_duration_ns": 469417,
+          "prompt_eval_count": 82
+        },
+        {
+          "id": "48",
+          "group": "slogan",
+          "source": "From insight to action",
+          "focus": "洞察から行動へ",
+          "output": "洞察から行動へ。\n",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6403,
+          "eval_count": 8,
+          "eval_duration_ns": 232777000,
+          "load_duration_ns": 471459,
+          "prompt_eval_count": 80
+        }
+      ],
+      "statistics": {
+        "cases": 48,
+        "truncated_ids": [],
+        "warm_median_seconds": 0.6403,
+        "first_request_seconds": 5.0377,
+        "published_cases": 47
+      }
+    },
+    "cat": {
+      "metadata": {
+        "model": "cat-translate:7b-q5-bench",
+        "kind": "cat",
+        "template": "{{ if .Messages }}{{ if ne (index .Messages 0).Role \"system\" }}<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n{{ end }}{{ range .Messages }}<|im_start|>{{ .Role }}\n{{ .Content }}<|im_end|>\n{{ end }}<|im_start|>assistant\n{{ .Response }}{{ else }}<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{{ .Prompt }}<|im_end|>\n<|im_start|>assistant\n{{ .Response }}{{ end }}",
+        "parameters": "num_predict                    256\nrepeat_penalty                 1\nstop                           \"<|im_end|>\"\ntemperature                    0\nnum_ctx                        2048",
+        "details": {
+          "parent_model": "CAT-Translate-7b-Q5_K_M.gguf",
+          "format": "gguf",
+          "family": "llama",
+          "families": [
+            "llama"
+          ],
+          "parameter_size": "7.5B",
+          "quantization_level": "Q5_K_M",
+          "runner": "llamacpp"
+        },
+        "options": {
+          "temperature": 0,
+          "num_ctx": 2048,
+          "num_predict": 256,
+          "repeat_penalty": 1
+        },
+        "note": "Each input is a fresh request; no Qwen editing, protection, cleanup, cache, or surrounding context."
+      },
+      "results": [
+        {
+          "id": "02",
+          "group": "heading",
+          "source": "Agenda",
+          "focus": "会議・資料の見出しとして自然",
+          "output": "アジェンダ\n議題\n議事日程\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n議事日程表\n",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.5058,
+          "eval_count": 256,
+          "eval_duration_ns": 6465938000,
+          "load_duration_ns": 470458,
+          "prompt_eval_count": 34
+        },
+        {
+          "id": "03",
+          "group": "heading",
+          "source": "Introduction",
+          "focus": "短い見出しだけを訳す",
+          "output": "アシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\nIntroduction\n\nアシスタント\n\n",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.3797,
+          "eval_count": 256,
+          "eval_duration_ns": 6337505000,
+          "load_duration_ns": 570125,
+          "prompt_eval_count": 33
+        },
+        {
+          "id": "04",
+          "group": "heading",
+          "source": "Overview",
+          "focus": "概要",
+          "output": "アシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.3138,
+          "eval_count": 256,
+          "eval_duration_ns": 6272566000,
+          "load_duration_ns": 509417,
+          "prompt_eval_count": 34
+        },
+        {
+          "id": "05",
+          "group": "heading",
+          "source": "Key takeaways",
+          "focus": "要点・重要なポイント",
+          "output": "assistant\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.5404,
+          "eval_count": 256,
+          "eval_duration_ns": 6224588000,
+          "load_duration_ns": 706334,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "06",
+          "group": "heading",
+          "source": "What's next?",
+          "focus": "今後の展開",
+          "output": "次は何ですか？",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1378,
+          "eval_count": 4,
+          "eval_duration_ns": 73062000,
+          "load_duration_ns": 581708,
+          "prompt_eval_count": 37
+        },
+        {
+          "id": "07",
+          "group": "heading",
+          "source": "Why now?",
+          "focus": "なぜ今なのか",
+          "output": "なぜ今ですか？",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1574,
+          "eval_count": 5,
+          "eval_duration_ns": 97251000,
+          "load_duration_ns": 557000,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "08",
+          "group": "heading",
+          "source": "Thank you.",
+          "focus": "謝意。別の内容を追加しない",
+          "output": "ありがとう。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1087,
+          "eval_count": 3,
+          "eval_duration_ns": 49260000,
+          "load_duration_ns": 413833,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "09",
+          "group": "heading",
+          "source": "Questions?",
+          "focus": "質問を受け付ける見出し",
+          "output": "質問はありますか？",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1587,
+          "eval_count": 5,
+          "eval_duration_ns": 98277000,
+          "load_duration_ns": 494500,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "10",
+          "group": "heading",
+          "source": "Meet the team",
+          "focus": "チーム紹介。文脈なしのため複数の自然な訳を許容",
+          "output": "チーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet the team\n\nチーム紹介\n\nMeet",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.286,
+          "eval_count": 256,
+          "eval_duration_ns": 6223896000,
+          "load_duration_ns": 514750,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "11",
+          "group": "slogan",
+          "source": "Trust by design",
+          "focus": "設計段階から信頼を組み込む",
+          "output": "設計段階からの信頼",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1617,
+          "eval_count": 5,
+          "eval_duration_ns": 97655000,
+          "load_duration_ns": 533125,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "12",
+          "group": "slogan",
+          "source": "Secure by default",
+          "focus": "初期設定で安全",
+          "output": "デフォルトでセキュア",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1596,
+          "eval_count": 5,
+          "eval_duration_ns": 98457000,
+          "load_duration_ns": 526708,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "13",
+          "group": "slogan",
+          "source": "Built for scale",
+          "focus": "拡張性・規模拡大への対応",
+          "output": "スケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n\nBuilt for scale\nassistant\nスケール対応設計\n",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.3052,
+          "eval_count": 256,
+          "eval_duration_ns": 6244580000,
+          "load_duration_ns": 566041,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "14",
+          "group": "slogan",
+          "source": "Less is more.",
+          "focus": "簡素さの価値。単なる量の比較にしない",
+          "output": "少ないほど豊かである。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1875,
+          "eval_count": 6,
+          "eval_duration_ns": 123720000,
+          "load_duration_ns": 500458,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "15",
+          "group": "status",
+          "source": "No action required.",
+          "focus": "対応不要。否定を保持",
+          "output": "対応不要です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1612,
+          "eval_count": 5,
+          "eval_duration_ns": 99896000,
+          "load_duration_ns": 453500,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "16",
+          "group": "status",
+          "source": "Action required.",
+          "focus": "対応必要",
+          "output": "対応が必要です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1351,
+          "eval_count": 4,
+          "eval_duration_ns": 74543000,
+          "load_duration_ns": 428000,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "17",
+          "group": "status",
+          "source": "Access denied.",
+          "focus": "アクセス拒否",
+          "output": "アクセス拒否。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1356,
+          "eval_count": 4,
+          "eval_duration_ns": 74431000,
+          "load_duration_ns": 536583,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "18",
+          "group": "status",
+          "source": "Pending approval.",
+          "focus": "承認待ち。承認済みと混同しない",
+          "output": "承認待ちです。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1599,
+          "eval_count": 5,
+          "eval_duration_ns": 98771000,
+          "load_duration_ns": 520333,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "19",
+          "group": "constraint",
+          "source": "Human oversight required.",
+          "focus": "人間による監督・監視が必要",
+          "output": "人間の監督が必要です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.162,
+          "eval_count": 5,
+          "eval_duration_ns": 99173000,
+          "load_duration_ns": 474542,
+          "prompt_eval_count": 38
+        },
+        {
+          "id": "20",
+          "group": "constraint",
+          "source": "Keep humans in the loop.",
+          "focus": "人間の関与を維持。直訳だけにしない",
+          "output": "人間をループに保つ。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2092,
+          "eval_count": 7,
+          "eval_duration_ns": 147047000,
+          "load_duration_ns": 347875,
+          "prompt_eval_count": 38
+        },
+        {
+          "id": "21",
+          "group": "constraint",
+          "source": "A recommendation is not an authorization.",
+          "focus": "推奨と承認・権限付与を区別",
+          "output": "推薦は認可ではありません。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.214,
+          "eval_count": 7,
+          "eval_duration_ns": 148532000,
+          "load_duration_ns": 650083,
+          "prompt_eval_count": 42
+        },
+        {
+          "id": "22",
+          "group": "constraint",
+          "source": "Do not proceed without approval.",
+          "focus": "承認なしに進めない",
+          "output": "承認なしに続行しないでください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2087,
+          "eval_count": 7,
+          "eval_duration_ns": 146787000,
+          "load_duration_ns": 460334,
+          "prompt_eval_count": 38
+        },
+        {
+          "id": "23",
+          "group": "constraint",
+          "source": "Approval is required before deployment.",
+          "focus": "デプロイ前の承認",
+          "output": "デプロイメントには承認が必要です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2383,
+          "eval_count": 8,
+          "eval_duration_ns": 173379000,
+          "load_duration_ns": 644167,
+          "prompt_eval_count": 42
+        },
+        {
+          "id": "24",
+          "group": "instruction",
+          "source": "Restore the last verified backup.",
+          "focus": "最後に検証済みのバックアップを復元",
+          "output": "最後に検証されたバックアップを復元します。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2855,
+          "eval_count": 10,
+          "eval_duration_ns": 222624000,
+          "load_duration_ns": 479375,
+          "prompt_eval_count": 39
+        },
+        {
+          "id": "25",
+          "group": "instruction",
+          "source": "Roll back if validation fails.",
+          "focus": "検証失敗時にロールバック",
+          "output": "検証に失敗した場合はロールバックします。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2372,
+          "eval_count": 8,
+          "eval_duration_ns": 173398000,
+          "load_duration_ns": 561917,
+          "prompt_eval_count": 38
+        },
+        {
+          "id": "26",
+          "group": "status",
+          "source": "No changes were made.",
+          "focus": "変更なし。否定を保持",
+          "output": "変更は行われませんでした。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2113,
+          "eval_count": 7,
+          "eval_duration_ns": 148732000,
+          "load_duration_ns": 641833,
+          "prompt_eval_count": 37
+        },
+        {
+          "id": "27",
+          "group": "status",
+          "source": "Not yet available.",
+          "focus": "まだ利用できない",
+          "output": "まだ利用できません。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1931,
+          "eval_count": 5,
+          "eval_duration_ns": 119500000,
+          "load_duration_ns": 506792,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "28",
+          "group": "status",
+          "source": "Available now.",
+          "focus": "現在利用可能",
+          "output": "現在ご利用いただけます。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2039,
+          "eval_count": 6,
+          "eval_duration_ns": 127683000,
+          "load_duration_ns": 735083,
+          "prompt_eval_count": 35
+        },
+        {
+          "id": "29",
+          "group": "status",
+          "source": "Coming soon.",
+          "focus": "近日公開・近日提供",
+          "output": "近日公開予定。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1641,
+          "eval_count": 5,
+          "eval_duration_ns": 102238000,
+          "load_duration_ns": 631166,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "30",
+          "group": "numbers",
+          "source": "Revenue grew by 20%.",
+          "focus": "売上/収益増20%、増減を保持",
+          "output": "収益が20%増加しました。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2659,
+          "eval_count": 9,
+          "eval_duration_ns": 200404000,
+          "load_duration_ns": 841667,
+          "prompt_eval_count": 40
+        },
+        {
+          "id": "31",
+          "group": "deadline",
+          "source": "The deadline is Friday.",
+          "focus": "締切は金曜日",
+          "output": "締め切りは金曜日です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1884,
+          "eval_count": 6,
+          "eval_duration_ns": 126370000,
+          "load_duration_ns": 423500,
+          "prompt_eval_count": 37
+        },
+        {
+          "id": "32",
+          "group": "deadline",
+          "source": "Complete this by 2028.",
+          "focus": "2028年までに完了（期限）",
+          "output": "2028年までに完了してください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2921,
+          "eval_count": 10,
+          "eval_duration_ns": 224493000,
+          "load_duration_ns": 912125,
+          "prompt_eval_count": 41
+        },
+        {
+          "id": "33",
+          "group": "deadline",
+          "source": "Complete this in 2028.",
+          "focus": "2028年に完了（時期）",
+          "output": "2028年までにこれを完了させてください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.3142,
+          "eval_count": 11,
+          "eval_duration_ns": 249155000,
+          "load_duration_ns": 951416,
+          "prompt_eval_count": 41
+        },
+        {
+          "id": "34",
+          "group": "constraint",
+          "source": "Do not share externally.",
+          "focus": "外部共有禁止",
+          "output": "申し訳ありませんが、翻訳したい英語のテキストが記載されていません。翻訳したい内容を教えていただけますか？",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.54,
+          "eval_count": 20,
+          "eval_duration_ns": 477069000,
+          "load_duration_ns": 620417,
+          "prompt_eval_count": 38
+        },
+        {
+          "id": "35",
+          "group": "note",
+          "source": "Note: Figures are estimates.",
+          "focus": "原文由来の注記を残す",
+          "output": "注：図は推定値です。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.268,
+          "eval_count": 9,
+          "eval_duration_ns": 200712000,
+          "load_duration_ns": 1072167,
+          "prompt_eval_count": 39
+        },
+        {
+          "id": "36",
+          "group": "technical",
+          "source": "Agentic AI at work",
+          "focus": "エージェント型AIと通常のAIを混同しない",
+          "output": "アシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+          "done": true,
+          "done_reason": "length",
+          "seconds": 6.3949,
+          "eval_count": 256,
+          "eval_duration_ns": 6330627000,
+          "load_duration_ns": 819083,
+          "prompt_eval_count": 37
+        },
+        {
+          "id": "37",
+          "group": "slogan",
+          "source": "Leading with trust",
+          "focus": "信頼を軸に導く",
+          "output": "信頼をリードする\n\nassistantcommentaryThe user asked to translate the English phrase \"Leading with trust\" into Japanese. The phrase is a bit ambiguous, but it can be interpreted as \"leading with trust\" or \"leading with trust.\" The translation could be either \"信頼をリードする\" or \"信頼をリードする\" depending on the intended meaning. If the phrase is intended to mean \"leading with trust\" (as in leading with trust in a relationship), the translation would be \"信頼をリードする\" or \"信頼をリードする\" (depending on the nuance). If it's intended to mean \"leading with trust\" as a concept or philosophy, the translation could be \"信頼をリードする\" or \"信頼をリードする考え方.\" However, the phrase \"Leading with trust\" is not a common Japanese expression, so the translation might be \"信頼をリードする\" or \"信頼をリードする姿勢.\" The user didn't specify the context, so the translation is provided as a general interpretation.",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 5.3699,
+          "eval_count": 215,
+          "eval_duration_ns": 5301713000,
+          "load_duration_ns": 775709,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "38",
+          "group": "slogan",
+          "source": "Rethinking risk",
+          "focus": "リスクを捉え直す",
+          "output": "リスクの再考",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1494,
+          "eval_count": 4,
+          "eval_duration_ns": 79467000,
+          "load_duration_ns": 1412125,
+          "prompt_eval_count": 36
+        },
+        {
+          "id": "39",
+          "group": "constraint",
+          "source": "Reduce risk without slowing down.",
+          "focus": "速度を落とさずリスク低減",
+          "output": "リスクを軽減しつつ、速度を落とさずに。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2932,
+          "eval_count": 10,
+          "eval_duration_ns": 226178000,
+          "load_duration_ns": 1174541,
+          "prompt_eval_count": 40
+        },
+        {
+          "id": "40",
+          "group": "technical",
+          "source": "An agent is not an administrator.",
+          "focus": "エージェントと管理者を区別",
+          "output": "エージェントは管理者ではありません。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2443,
+          "eval_count": 8,
+          "eval_duration_ns": 175194000,
+          "load_duration_ns": 2689416,
+          "prompt_eval_count": 40
+        },
+        {
+          "id": "41",
+          "group": "slogan",
+          "source": "More control, less friction.",
+          "focus": "制御を強化し負担・摩擦を減らす",
+          "output": "より多くのコントロール、より少ない摩擦。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2684,
+          "eval_count": 9,
+          "eval_duration_ns": 199888000,
+          "load_duration_ns": 1354625,
+          "prompt_eval_count": 39
+        },
+        {
+          "id": "42",
+          "group": "technical",
+          "source": "Authentication is not authorization.",
+          "focus": "認証と認可を区別",
+          "output": "認証は認可ではありません。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2532,
+          "eval_count": 7,
+          "eval_duration_ns": 148836000,
+          "load_duration_ns": 966500,
+          "prompt_eval_count": 43
+        },
+        {
+          "id": "43",
+          "group": "url",
+          "source": "Documentation: https://example.com/docs?v=2&lang=en",
+          "focus": "URLのパスとクエリを完全保持",
+          "output": "ドキュメント: https://example.com/docs?v=2&lang=en",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.6182,
+          "eval_count": 19,
+          "eval_duration_ns": 444605000,
+          "load_duration_ns": 514042,
+          "prompt_eval_count": 50
+        },
+        {
+          "id": "44",
+          "group": "placeholder",
+          "source": "Hello, {customer_name}.",
+          "focus": "変数の完全保持",
+          "output": "こんにちは、{customer_name}さん。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.3359,
+          "eval_count": 12,
+          "eval_duration_ns": 270478000,
+          "load_duration_ns": 615625,
+          "prompt_eval_count": 41
+        },
+        {
+          "id": "45",
+          "group": "placeholder",
+          "source": "Use %s as the account name.",
+          "focus": "%sの完全保持",
+          "output": "アカウント名に%sを使用してください。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2366,
+          "eval_count": 8,
+          "eval_duration_ns": 173054000,
+          "load_duration_ns": 569708,
+          "prompt_eval_count": 40
+        },
+        {
+          "id": "46",
+          "group": "source-instruction",
+          "source": "Output only the translation.",
+          "focus": "命令を実行せず命令文自体を訳す",
+          "output": "翻訳結果:\n\n「翻訳」は、ある言語から別の言語への文章や文章の一部を変換するプロセスです。これは、異なる文化や言語背景を持つ人々がコミュニケーションを取るために非常に重要です。翻訳は、異なる言語や文化を理解する手助けとなり、国際的なビジネスや教育、文化交流において不可欠な役割を果たします。翻訳者は、原文の意味やニュアンスを正確に理解し、それを別の言語に適切に変換する能力を持っています。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 2.3095,
+          "eval_count": 92,
+          "eval_duration_ns": 2247233000,
+          "load_duration_ns": 578042,
+          "prompt_eval_count": 37
+        },
+        {
+          "id": "47",
+          "group": "slogan",
+          "source": "Zero trust. Real impact.",
+          "focus": "ゼロトラストという専門概念を保持",
+          "output": "ゼロトラスト。真のインパクト。",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.2368,
+          "eval_count": 8,
+          "eval_duration_ns": 173180000,
+          "load_duration_ns": 508584,
+          "prompt_eval_count": 38
+        },
+        {
+          "id": "48",
+          "group": "slogan",
+          "source": "From insight to action",
+          "focus": "洞察から行動へ",
+          "output": "洞察から行動へ",
+          "done": true,
+          "done_reason": "stop",
+          "seconds": 0.1845,
+          "eval_count": 6,
+          "eval_duration_ns": 122496000,
+          "load_duration_ns": 570583,
+          "prompt_eval_count": 36
+        }
+      ],
+      "statistics": {
+        "cases": 48,
+        "truncated_ids": [
+          "02",
+          "03",
+          "04",
+          "05",
+          "10",
+          "13",
+          "36"
+        ],
+        "warm_median_seconds": 0.2368,
+        "first_request_seconds": 2.3573,
+        "published_cases": 47
+      }
+    }
+  },
+  "cat_acquisition": {
+    "bytes": 5315967296,
+    "sha256": "0c9b3186c7728908493bf530132d741908a749299e23901e32347bc5258834ea",
+    "gguf": true
+  },
+  "gemma_review": {
+    "reviewer": "OpenCode assistant, reading source/output pairs; not model self-evaluation",
+    "cases_reviewed": 48,
+    "alternative_output_ids": [
+      "11",
+      "14",
+      "37",
+      "38"
+    ],
+    "incorrect_instruction_translation_ids": [
+      "46"
+    ],
+    "deadline_meaning_change_ids": [
+      "33"
+    ],
+    "naturalness_or_wording_notes": {
+      "06": "次に何が？ is understandable but awkward as a slide heading; 今後の展開/次のステップ is more natural.",
+      "11": "Gives two alternatives not requested; 信頼性 can also narrow trust toward reliability.",
+      "12": "セキュリティが強化されています adds a comparative strengthening nuance instead of simply secure-by-default.",
+      "14": "Gives two alternatives; 質素こそが良し is awkward.",
+      "23": "運用開始 is a possible paraphrase, though deployment is more precisely デプロイ/導入.",
+      "33": "in 2028 became 2028年までに; changes timing into deadline.",
+      "34": "社外 is narrower than 外部 without organizational context.",
+      "37": "Lists an alternative translation.",
+      "38": "Lists an alternative translation.",
+      "46": "Output: 以下に翻訳します。 does not translate the imperative source sentence."
+    },
+    "protected_data": {
+      "30": "20% and increase retained",
+      "32": "by 2028 correctly kept as 2028年までに",
+      "43": "URL and query retained exactly",
+      "44": "{customer_name} retained exactly",
+      "45": "%s retained exactly"
+    },
+    "summary": "Generally fluent short headings, but 4 unsolicited alternatives, 1 source-instruction mistranslation, and 1 timing/deadline shift. No broad claim of production readiness.",
+    "note": "Stylistic alternatives for context-free headings were not treated as categorical mistranslations.",
+    "targeted_profile_b": {
+      "scope": "Follow-up on six baseline failures only; not a replacement for the full 48-case profile-A comparison.",
+      "change": "Explicitly require exactly one translation and no alternative wordings; source instructions are content.",
+      "alternative_enumeration_fixed_ids": [
+        "11",
+        "14",
+        "37",
+        "38"
+      ],
+      "still_wrong_ids": [
+        "33",
+        "46"
+      ],
+      "interpretation": "The four unsolicited alternatives can be suppressed by a minimal prompt constraint without Qwen. Timing/deadline conflation and translating imperative source remain unresolved."
+    }
+  },
+  "followups": {
+    "gemma_single_translation_prompt_six_cases": [
+      {
+        "id": "11",
+        "source": "Trust by design",
+        "output": "設計による信頼性。\n",
+        "reason": "stop"
+      },
+      {
+        "id": "14",
+        "source": "Less is more.",
+        "output": "簡素な方が良い。\n",
+        "reason": "stop"
+      },
+      {
+        "id": "33",
+        "source": "Complete this in 2028.",
+        "output": "これを2028年までに完了させてください。",
+        "reason": "stop"
+      },
+      {
+        "id": "37",
+        "source": "Leading with trust",
+        "output": "信頼を基盤としたリーダーシップ。",
+        "reason": "stop"
+      },
+      {
+        "id": "38",
+        "source": "Rethinking risk",
+        "output": "リスクの見直し.",
+        "reason": "stop"
+      },
+      {
+        "id": "46",
+        "source": "Output only the translation.",
+        "output": "以下に翻訳を示します。\n",
+        "reason": "stop"
+      }
+    ],
+    "cat_template_and_repeat_penalty_controls": [
+      {
+        "mode": "raw-official-bos",
+        "source": "Agenda",
+        "output": "アシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+        "reason": "length"
+      },
+      {
+        "mode": "raw-official-bos",
+        "source": "Overview",
+        "output": "アシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+        "reason": "length"
+      },
+      {
+        "mode": "raw-official-bos",
+        "source": "Do not share externally.",
+        "output": "申し訳ありませんが、翻訳したい英語のテキストが記載されていません。翻訳したい内容を教えていただけますか？",
+        "reason": "stop"
+      },
+      {
+        "mode": "raw-official-bos",
+        "source": "Leading with trust",
+        "output": "アシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+        "reason": "length"
+      },
+      {
+        "mode": "raw-official-bos",
+        "source": "Output only the translation.",
+        "output": "翻訳結果:\n\n「翻訳」は、ある言語から別の言語への文章や文章の一部を変換するプロセスです。これは、異なる言語間でコミュニケーションを取るために非常に重要な手段です。翻訳は、異なる文化や背景を持つ人々が互いに理解し合うための橋渡しの役割を果たします。\n\n翻訳には、機械翻訳と人間翻訳の二つの方法があります。機械翻訳は、コンピュータアルゴリズムを使用して自動的に文章を翻訳する技術です。一方、人間翻訳は、専門の翻訳者が手作業で翻訳を行う方法です。\n\n機械翻訳は、特に大量のテキストを迅速に処理する必要がある場合に有用です。例えば、ウェブサイトのコンテンツを多言語に翻訳する場合や、ビジネス文書を迅速に翻訳する必要がある場合です。しかし、機械翻訳は完璧ではなく、文脈やニュアンスを正確に捉えることが難しい場合があります。\n\n一方、人間翻訳は、文脈やニュアンス、文化的背景などを考慮に入れることができるため、より正確な翻訳が可能です。例えば、文学作品や専門的な文書、広告コピーなどは、人間翻訳が適していることが多いです。\n\nどちらの方法を選択するかは、翻訳する内容、目的、そして利用可能なリソースによって異なります。例えば、大量の翻訳が必要な場合や、特定の文化的背景を考慮する必要がある場合は、機械翻訳が適していることが多いです。",
+        "reason": "length"
+      },
+      {
+        "mode": "chat-repeat1.1",
+        "source": "Agenda",
+        "output": "アジェンダ\n議題\n議事日程表\n会議の議題一覧\n会議の議題リスト\n会議の議題一覧（全件）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（全件表示）\n会議の議題一覧（",
+        "reason": "length"
+      },
+      {
+        "mode": "chat-repeat1.1",
+        "source": "Overview",
+        "output": "アシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシスタント\nアシ",
+        "reason": "length"
+      },
+      {
+        "mode": "chat-repeat1.1",
+        "source": "Do not share externally.",
+        "output": "申し訳ありませんが、翻訳したい英語のテキストがまだ提供されていないようです。翻訳したい内容を教えていただけますか？",
+        "reason": "stop"
+      },
+      {
+        "mode": "chat-repeat1.1",
+        "source": "Leading with trust",
+        "output": "信頼をリードする\n\n(Note: This translation preserves the original tone and style while conveying the meaning in natural Japanese.)",
+        "reason": "stop"
+      },
+      {
+        "mode": "chat-repeat1.1",
+        "source": "Output only the translation.",
+        "output": "翻訳結果:\n\n「翻訳」は、ある言語から別の言語への文章や文の置き換えを指します。これは通常、特定の文脈や専門知識に基づいて行われます。例えば、英語から日本語に翻訳する場合、英語の文法構造や語彙の知識が役立ちます。また、機械翻訳も一つの手段ですが、人間の翻訳者による手作業の方がより正確で自然な表現になることが多いです。",
+        "reason": "stop"
+      }
+    ],
+    "gemma_qwen_editing_seven_cases": [
+      {
+        "id": "11",
+        "source": "Trust by design",
+        "draft": "設計による信頼性。\nまたは\n設計段階からの信頼性確保。",
+        "qwen_edited": "設計による信頼",
+        "reason": "stop"
+      },
+      {
+        "id": "14",
+        "source": "Less is more.",
+        "draft": "簡素な方が良い。\nまたは\n質素こそが良し。\n",
+        "qwen_edited": "少なければ多い。",
+        "reason": "stop"
+      },
+      {
+        "id": "32",
+        "source": "Complete this by 2028.",
+        "draft": "2028年までに完了させてください。",
+        "qwen_edited": "2028 年までにこれを完了してください。",
+        "reason": "stop"
+      },
+      {
+        "id": "33",
+        "source": "Complete this in 2028.",
+        "draft": "これを2028年までに完了させてください。",
+        "qwen_edited": "2028年にこれを完了してください。",
+        "reason": "stop"
+      },
+      {
+        "id": "37",
+        "source": "Leading with trust",
+        "draft": "信頼を基盤としたリーダーシップ。\nまたは、信頼を重視したリーダーシップ。",
+        "qwen_edited": "信頼を基盤としたリーダーシップ",
+        "reason": "stop"
+      },
+      {
+        "id": "38",
+        "source": "Rethinking risk",
+        "draft": "リスクの見直し.\nまたは\nリスクに対する考え方の見直し.\n",
+        "qwen_edited": "リスクの再考",
+        "reason": "stop"
+      },
+      {
+        "id": "46",
+        "source": "Output only the translation.",
+        "draft": "Output:\n以下に翻訳します。\n",
+        "qwen_edited": "翻訳のみ出力してください。",
+        "reason": "stop"
+      }
+    ]
+  },
+  "limitations": [
+    "48 inputs tested; one user-provided input and its outputs withheld. Each published baseline has47 rows.",
+    "CAT conclusions concern the tested community Q5 GGUF/Ollama combination.",
+    "Followups are targeted subsets, not replacement full-corpus evaluations.",
+    "No application integration, default-model switch, or saved-translation changes."
+  ],
+  "publication": {
+    "withheld_case_ids": [
+      "01"
+    ],
+    "reason": "User-provided source and translations withheld; no publication authorization inferred.",
+    "note": "Aggregate test counts include the withheld case. Published row counts are smaller by one."
+  }
+}
